@@ -1,5 +1,5 @@
 # KinectDoctor
-本项目使用GPL3.0协议，禁止用于商业用途，由此造成的后果和法律责任均与本人无关。
+本项目使用GPL3.0协议，禁止用于商业用途。
 ## License
 
 Copyright (C) 2016 QG Studio
