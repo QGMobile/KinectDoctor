@@ -1,7 +1,9 @@
-package com.qg.kinectdoctor;
+package com.qg.kinectdoctor.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.qg.kinectdoctor.R;
 
 public class MainActivity extends AppCompatActivity {
 

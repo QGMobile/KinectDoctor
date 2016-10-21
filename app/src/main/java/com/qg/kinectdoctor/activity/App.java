@@ -1,4 +1,4 @@
-package com.qg.kinectdoctor;
+package com.qg.kinectdoctor.activity;
 
 import android.app.Application;
 
