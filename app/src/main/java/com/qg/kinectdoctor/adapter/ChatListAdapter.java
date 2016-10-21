@@ -55,7 +55,7 @@ public class ChatListAdapter extends ItemAdapter<ChatInfoBean, ChatListAdapter.C
                 unReadTv.setText("");
             }else{
                 unReadTv.setText(""+unReadCount);
-                unReadTv.setVisibility(View.GONE);
+                unReadTv.setVisibility(View.VISIBLE);
             }
         }
     }

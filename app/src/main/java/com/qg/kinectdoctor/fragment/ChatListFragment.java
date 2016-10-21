@@ -33,7 +33,7 @@ public class ChatListFragment extends BaseFragment{
         if(v != null){
             mRecyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
             initRecyclerView();
-            test();
+            getDataFromServer();
         }
         return v;
     }
@@ -46,7 +46,7 @@ public class ChatListFragment extends BaseFragment{
     }
 
     private void getDataFromServer(){
-
+        test();
     }
 
     private void test(){
