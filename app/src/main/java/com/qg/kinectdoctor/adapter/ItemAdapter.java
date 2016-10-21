@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by ZH_L on 2016/10/21.
  */
-public abstract class ItemAdapter<E, VH extends ItemAdapter.ItemViewHolder> extends RecyclerView.Adapter<VH>{
+public abstract class ItemAdapter<E, VH extends ItemViewHolder> extends RecyclerView.Adapter<VH>{
     private List<E> mList;
     private LayoutInflater mInflater;
     private int mLayoutId;
@@ -33,9 +33,15 @@ public abstract class ItemAdapter<E, VH extends ItemAdapter.ItemViewHolder> exte
         holder.bindElement(element);
     }
 
+    /**
+     * 用getView 获取到itemView之后，new相应的holder就好了
+     * @param parent
+     * @param viewType
+     * @return
+     */
     public abstract VH createItemView(ViewGroup parent, int viewType);
 
-    public abstract  void bindViewHolder(VH holder);
+//    public abstract  void bindViewHolder(VH holder);
 
     public View getView(ViewGroup parent, int viewType){
         return mInflater.inflate(mLayoutId, parent, false);
@@ -44,14 +50,5 @@ public abstract class ItemAdapter<E, VH extends ItemAdapter.ItemViewHolder> exte
     @Override
     public int getItemCount() {
         return mList.size();
-    }
-
-    public abstract class ItemViewHolder<E> extends RecyclerView.ViewHolder{
-
-        public ItemViewHolder(View itemView) {
-            super(itemView);
-        }
-
-        public abstract void bindElement(E element);
     }
 }
