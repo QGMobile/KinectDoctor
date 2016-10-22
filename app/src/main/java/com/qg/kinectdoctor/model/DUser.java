@@ -98,4 +98,19 @@ public class DUser {
     public void setJobTitle(String jobTitle) {
         this.jobTitle = jobTitle;
     }
+
+    @Override
+    public String toString() {
+        return "DUser{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", sex=" + sex +
+                ", age=" + age +
+                ", phone='" + phone + '\'' +
+                ", password='" + password + '\'' +
+                ", hospital='" + hospital + '\'' +
+                ", department='" + department + '\'' +
+                ", jobTitle='" + jobTitle + '\'' +
+                '}';
+    }
 }

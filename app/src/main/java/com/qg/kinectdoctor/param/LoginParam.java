@@ -4,11 +4,11 @@ package com.qg.kinectdoctor.param;
  * Created by ZH_L on 2016/10/22.
  */
 public class LoginParam extends Param{
-    private String username;
+    private String phone;
     private String password;
 
-    public LoginParam(String username, String password){
-        this.username = username;
+    public LoginParam(String phone, String password){
+        this.phone = phone;
         this.password = password;
     }
 }

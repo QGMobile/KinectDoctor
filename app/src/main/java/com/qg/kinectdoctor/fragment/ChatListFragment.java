@@ -34,6 +34,7 @@ public class ChatListFragment extends BaseFragment{
             mRecyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
             initRecyclerView();
             getDataFromServer();
+
         }
         return v;
     }

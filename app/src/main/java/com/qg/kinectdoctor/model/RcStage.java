@@ -7,16 +7,20 @@ public class RcStage {
     private int id;
     private int mrId;//病历id，所属病历
     private int num;//所属阶段
-    private Action action;//阶段动作
+//    private Action action;//阶段动作
+    private int actionId;   //动作id
+    private String actionName;  //动作名称
     private float matchValue;//匹配数值
 
     public RcStage(){};
 
-    public RcStage(int mrId, int num, Action action, float matchValue) {
+    public RcStage(int mrId, int num, float matchValue, int actionId, String actionName) {
         this.mrId = mrId;
         this.num = num;
-        this.action = action;
+//        this.action = action;
         this.matchValue = matchValue;
+        this.actionId = actionId;
+        this.actionName = actionName;
     }
 
     public int getMrId() {
@@ -43,12 +47,12 @@ public class RcStage {
         this.num = num;
     }
 
-    public Action getAction() {
-        return action;
+    public int getActionId() {
+        return actionId;
     }
 
-    public void setAction(Action action) {
-        this.action = action;
+    public void setActionId(int actionId) {
+        this.actionId = actionId;
     }
 
     public float getMatchValue() {
@@ -57,5 +61,13 @@ public class RcStage {
 
     public void setMatchValue(float matchValue) {
         this.matchValue = matchValue;
+    }
+
+    public String getActionName() {
+        return actionName;
+    }
+
+    public void setActionName(String actionName) {
+        this.actionName = actionName;
     }
 }

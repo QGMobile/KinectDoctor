@@ -14,20 +14,5 @@ import com.qg.kinectdoctor.util.ToastUtil;
  */
 public class Test {
 
-    public static void test(final Context context,final TextView tv){
-        LoginParam param = new LoginParam("13568908156","123456");
-        LogicImpl.getInstance().login(param, new LogicHandler<LoginResult>() {
-            @Override
-            public void onResult(LoginResult result, boolean onUIThread) {
-                if(onUIThread){
-                    if(result.isOk()){
-                        ToastUtil.showToast(context, "访问网络成功");
-                        tv.setText(result.getStr());
-                    }else{
-                        ToastUtil.showToast(context, result.errMsg);
-                    }
-                }
-            }
-        });
-    }
+
 }

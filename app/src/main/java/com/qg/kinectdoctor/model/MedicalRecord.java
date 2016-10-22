@@ -22,12 +22,12 @@ public class MedicalRecord {
     private String department;//科室
     private String setTime;//建立时间
     private String condition;//病况
-    private ArrayList<String> allergicDrug;//过敏药物
+    private String allergicDrug;//过敏药物
     private ArrayList<RcStage> rcStages;//康复阶段
 
     public MedicalRecord(){};
 
-    public MedicalRecord(int puserId, int duserId, int age, String pname, int sex, String pphone, String birth, String dname, String dphone, String hospital, String department, String setTime, String condition, ArrayList<String> allergicDrug, ArrayList<RcStage> rcStages) {
+    public MedicalRecord(int puserId, int duserId, int age, String pname, int sex, String pphone, String birth, String dname, String dphone, String hospital, String department, String setTime, String condition, String allergicDrug, ArrayList<RcStage> rcStages) {
         this.puserId = puserId;
         this.duserId = duserId;
         this.age = age;
@@ -158,11 +158,11 @@ public class MedicalRecord {
         this.condition = condition;
     }
 
-    public ArrayList<String> getAllergicDrug() {
+    public String getAllergicDrug() {
         return allergicDrug;
     }
 
-    public void setAllergicDrug(ArrayList<String> allergicDrug) {
+    public void setAllergicDrug(String allergicDrug) {
         this.allergicDrug = allergicDrug;
     }
 

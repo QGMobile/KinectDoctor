@@ -54,7 +54,7 @@ public class HttpProcess {
                 HttpURLConnection conn = (HttpURLConnection)url.openConnection();
                 initConnection(conn);
                 os = conn.getOutputStream();
-                os.write((DefList.JSON_KEY+"="+json).getBytes());
+                os.write((json).getBytes());
                 os.flush();
                 Log.d(TAG,"send->"+json);
                 br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -90,9 +90,11 @@ public class HttpProcess {
     private static void initConnection(HttpURLConnection conn){
         if(conn == null)return;
         try {
+            conn.setConnectTimeout(15*1000);
             conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);
+            conn.addRequestProperty("content-type","application/json");
         } catch (ProtocolException e) {
             e.printStackTrace();
         }
