@@ -51,4 +51,5 @@ public abstract class ItemAdapter<E, VH extends ItemViewHolder> extends Recycler
     public int getItemCount() {
         return mList.size();
     }
+
 }

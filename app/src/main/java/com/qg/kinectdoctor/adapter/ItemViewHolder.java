@@ -5,11 +5,12 @@ import android.view.View;
 
 /**
  * Created by ZH_L on 2016/10/21.
- */public abstract class ItemViewHolder<E> extends RecyclerView.ViewHolder{
+ */public abstract class ItemViewHolder<E> extends RecyclerView.ViewHolder implements View.OnClickListener{
 
     public ItemViewHolder(View itemView) {
         super(itemView);
         initChilds(itemView);
+
     }
 
     /**
@@ -23,4 +24,9 @@ import android.view.View;
      * @param itemView
      */
     public abstract void initChilds(View itemView);
+
+    @Override
+    public void onClick(View view) {
+
+    }
 }

@@ -4,20 +4,25 @@ package com.qg.kinectdoctor.model;
  * Created by ZH_L on 2016/10/21.
  */
 public class ChatInfoBean {
-    private String name;
+    private PUser pUser;
     private int unReadCount;
 
-    public ChatInfoBean(String name, int unReadCount){
-        this.name = name;
+    public ChatInfoBean(PUser pUser, int unReadCount){
+        this.pUser = pUser;
         this.unReadCount = unReadCount;
     }
 
-    public String getName() {
-        return name;
+    public ChatInfoBean(PUser pUser){
+        this.pUser = pUser;
+        this.unReadCount = 0;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPUser(PUser pUser){
+        this.pUser = pUser;
+    }
+
+    public PUser getPUser(){
+        return pUser;
     }
 
     public int getUnReadCount() {
@@ -27,4 +32,6 @@ public class ChatInfoBean {
     public void setUnReadCount(int unReadCount) {
         this.unReadCount = unReadCount;
     }
+
+
 }
