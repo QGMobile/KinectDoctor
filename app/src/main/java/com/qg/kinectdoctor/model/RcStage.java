@@ -11,16 +11,18 @@ public class RcStage {
     private int actionId;   //动作id
     private String actionName;  //动作名称
     private float matchValue;//匹配数值
+    private int puserId; //病人id
 
     public RcStage(){};
 
-    public RcStage(int mrId, int num, float matchValue, int actionId, String actionName) {
+    public RcStage(int mrId, int num, float matchValue, int actionId, String actionName, int puserId) {
         this.mrId = mrId;
         this.num = num;
 //        this.action = action;
         this.matchValue = matchValue;
         this.actionId = actionId;
         this.actionName = actionName;
+        this.puserId = puserId;
     }
 
     public int getMrId() {
@@ -69,5 +71,13 @@ public class RcStage {
 
     public void setActionName(String actionName) {
         this.actionName = actionName;
+    }
+
+    public int getPuserId() {
+        return puserId;
+    }
+
+    public void setPuserId(int puserId) {
+        this.puserId = puserId;
     }
 }

@@ -18,12 +18,19 @@ import com.qg.kinectdoctor.R;
 import com.qg.kinectdoctor.activity.ChatActivity;
 import com.qg.kinectdoctor.adapter.ChatContactListAdapter;
 import com.qg.kinectdoctor.emsdk.EMConstants;
+import com.qg.kinectdoctor.emsdk.IMFilter;
 import com.qg.kinectdoctor.emsdk.IMManager;
+import com.qg.kinectdoctor.logic.LogicHandler;
+import com.qg.kinectdoctor.logic.LogicImpl;
 import com.qg.kinectdoctor.model.ChatInfoBean;
+import com.qg.kinectdoctor.model.PUser;
+import com.qg.kinectdoctor.param.GetPUserByPhoneParam;
+import com.qg.kinectdoctor.result.GetPUserByPhoneResult;
 import com.qg.kinectdoctor.util.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ZH_L on 2016/10/21.
@@ -60,19 +67,38 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
 
     private void getDataFromServer(){
         try {
-            List<String> username = IMManager.getInstance(getActivity()).getFriendsList();
+            List<String> usernames = IMManager.getInstance(getActivity()).getFriendsList();
+            final List<String> phones = IMFilter.filterToPhones(usernames);
+            GetPUserByPhoneParam param = new GetPUserByPhoneParam(phones);
+            LogicImpl.getInstance().getPUserByPhoneParam(param, new LogicHandler<GetPUserByPhoneResult>() {
+                @Override
+                public void onResult(GetPUserByPhoneResult result, boolean onUIThread) {
+                    if(onUIThread){
+                        if(result.isOk()){
+                            //get a Map<String, PUser>
+                            Map<String, PUser> phoneToPUser = result.getPhoneToPUser();
+                            if(phoneToPUser != null){
+                                Log.d("GetPUserByPhoneResult", phoneToPUser.toString());
+                            }
+                            for(String phone: phones) {
+                                PUser pUser = phoneToPUser.get(phone);
+                                if(pUser != null){
+                                    ChatInfoBean bean = new ChatInfoBean(pUser);
+                                    mList.add(bean);
+                                }
+                            }
+                            mAdapter.notifyDataSetChanged();
+                        }else{
+                            ToastUtil.showResultErrorToast(result);
+                        }
+                    }
+                }
+            });
         } catch (HyphenateException e) {
             e.printStackTrace();
             Log.e(TAG, e.getMessage());
         }
     }
-
-    private void test(){
-//        ChatInfoBean bean = new ChatInfoBean( null,10);
-//        mList.add(bean);
-//        mAdapter.notifyDataSetChanged();
-    }
-
 
 
     private void initEM(){
@@ -143,22 +169,43 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
 
     @Override
     public void onContactAdded(String username) {
+        if(username == null || username.equals("")) return;
         //增加了某个联系人
-        //PUser pUser = getFromServer
-        //ChatInfoBean bean = new ChatInfoBean(pUser);
-//        if(!mList.contains(bean)){
-//            mList.add(bean);
-//            mAdapter.notifyDataSetChanged();
-//        }
+        final List<String> phones = IMFilter.filterToPhones(username);
+        GetPUserByPhoneParam param = new GetPUserByPhoneParam(phones);
+        LogicImpl.getInstance().getPUserByPhoneParam(param, new LogicHandler<GetPUserByPhoneResult>() {
+            @Override
+            public void onResult(GetPUserByPhoneResult result, boolean onUIThread) {
+                if(onUIThread){
+                    if(result.isOk()){
+                        //get a Map<String, PUser>
+                        Map<String, PUser> map = result.getPhoneToPUser();
+                        if(map != null){
+                            for(String phone: phones){
+                                PUser pUser = map.get(phone);
+                                ChatInfoBean bean = new ChatInfoBean(pUser);
+                                mList.add(bean);
+                            }
+                        }
+                        mAdapter.notifyDataSetChanged();
+                    }else{
+                        ToastUtil.showResultErrorToast(result);
+                    }
+                }
+            }
+        });
     }
 
     @Override
     public void onContactDeleted(String username) {
-        //被删除时调用
-        //PUser pUser = getFromServer
-        //ChatInfoBean bean = new ChatInfoBean(pUser);
-        //mList.remove(bean);
-        //mAdapter.notifyDataSetChanged();
+        //被删除时调用,理论上这个for循环只有一个匹配
+        for(ChatInfoBean bean: mList){
+            if(username.equals(bean.getIMUsername())){
+                mList.remove(bean);
+                showMessage("病人-"+ bean.getPUser().getName() + "-删除了你");
+            }
+        }
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override

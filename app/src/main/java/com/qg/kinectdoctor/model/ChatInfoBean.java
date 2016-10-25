@@ -56,7 +56,7 @@ public class ChatInfoBean implements Serializable{
         return false;
     }
 
-    public void clearUnReadCount(){
-
-    }
+//    public void clearUnReadCount(){
+//
+//    }
 }

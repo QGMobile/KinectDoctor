@@ -27,7 +27,7 @@ public class ToastUtil {
         showToast(context, context.getResources().getString(strId));
     }
 
-    public static void showResultErrorToast(Context context, Result r){
-        showToast(context, r.errMsg);
+    public static void showResultErrorToast(Result r){
+        showToast(App.getInstance(), r.errMsg);
     }
 }

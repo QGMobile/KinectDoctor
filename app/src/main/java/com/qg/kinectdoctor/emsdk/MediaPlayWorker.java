@@ -3,6 +3,9 @@ package com.qg.kinectdoctor.emsdk;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
+
+import com.hyphenate.chat.EMVoiceMessageBody;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -26,7 +29,11 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements MediaPlayer
         while(true) {
             try {
                 PlayTask task = mQueue.take();
-
+                EMVoiceMessageBody body = task.getEmVoiceMessageBody();
+                String localUrl = body.getLocalUrl();
+                String remoteUrl = body.getRemoteUrl();
+                Log.e(TAG, "localUrl->"+localUrl+",remoteUrl->" + remoteUrl);
+                
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

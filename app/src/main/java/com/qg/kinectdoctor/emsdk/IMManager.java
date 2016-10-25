@@ -12,6 +12,7 @@ import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.exceptions.HyphenateException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -154,6 +155,19 @@ public class IMManager {
     public List<String> getFriendsList() throws HyphenateException {
         List<String> usernames = EMClient.getInstance().contactManager().getAllContactsFromServer();
         return usernames;
+    }
+
+    public EMConversation getCertainConversion(String username){
+        EMConversation conversation = EMClient.getInstance().chatManager().getConversation(username, EMConversation.EMConversationType.Chat);
+        return conversation;
+    }
+
+    public List<EMMessage> getChatHistory(String username){
+        EMConversation conversation = getCertainConversion(username);
+        if(conversation != null){
+            return conversation.getAllMessages();
+        }
+        return new ArrayList<>();
     }
 
     public void setContactListener(EMContactListener listener){

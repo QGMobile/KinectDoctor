@@ -13,15 +13,21 @@ import android.view.View;
 import android.widget.Button;
 
 import com.hyphenate.EMMessageListener;
+import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMVoiceMessageBody;
 import com.hyphenate.exceptions.HyphenateException;
 import com.qg.kinectdoctor.R;
 import com.qg.kinectdoctor.adapter.ChatAdapter;
 import com.qg.kinectdoctor.emsdk.EMConstants;
+import com.qg.kinectdoctor.emsdk.IMFilter;
 import com.qg.kinectdoctor.emsdk.IMManager;
+import com.qg.kinectdoctor.emsdk.MediaExectutor;
+import com.qg.kinectdoctor.emsdk.PlayTask;
+import com.qg.kinectdoctor.emsdk.RecordTask;
 import com.qg.kinectdoctor.model.ChatInfoBean;
 import com.qg.kinectdoctor.model.VoiceBean;
+import com.qg.kinectdoctor.util.RecorderStateMachine;
 import com.qg.kinectdoctor.util.ToastUtil;
 import com.qg.kinectdoctor.view.TopbarL;
 
@@ -33,7 +39,7 @@ import java.util.List;
 /**
  * Created by ZH_L on 2016/10/22.
  */
-public class ChatActivity extends BaseActivity implements EMMessageListener, ChatAdapter.OnItemVoiceClickListener, View.OnLongClickListener, View.OnTouchListener{
+public class ChatActivity extends BaseActivity implements EMMessageListener, ChatAdapter.OnItemVoiceClickListener, View.OnLongClickListener, View.OnTouchListener, RecorderStateMachine.RecorderStateMachineListener{
     private static final String TAG = ChatActivity.class.getSimpleName();
 
     public static void startForResult(Activity activity, int requestCode){
@@ -54,6 +60,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     private ChatAdapter  mAdapter;
 
     private ChatInfoBean curChatingBean;
+
+    private RecorderStateMachine rsMachine;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,9 +71,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
 
         initUI();
         initEM();
-        mediaRecorder = new MediaRecorder();
-        initRecorder();
-//        recordBtn.performClick();
+
+        rsMachine = new RecorderStateMachine();
+        rsMachine.setRecorderStateMachineListener(this);
     }
 
     private void initUI(){
@@ -76,7 +84,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         initRecyclerView();
 
         mRecordBtn = (Button) findViewById(R.id.chat_record_btn);
-        mRecordBtn.setOnClickListener(this);
+        mRecordBtn.setOnLongClickListener(this);
+        mRecordBtn.setOnTouchListener(this);
     }
 
     private void initTopbar(){
@@ -106,87 +115,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     }
 
 
-
-
-    private static final int DEFAULT_AUDIO_SOURCE = MediaRecorder.AudioSource.MIC;
-    private static final int DEFAULT_OUTPUT_FORMAT =  MediaRecorder.OutputFormat.AMR_NB;
-    private static final String DEFAUL_OUTPUT_FILE = Environment.getExternalStorageDirectory()+File.separator+App.getInstance().getPackageName()+ File.separator+"voice";
-    private static final int DEFAULT_AUDIO_ENCODER = MediaRecorder.AudioEncoder.AMR_NB;
-
-
-    private MediaRecorder mediaRecorder;
-    private boolean isPrepared = false;
-
-    private void initRecorder(){
-        isRecording = false;
-        isPrepared = false;
-        mediaRecorder.setAudioSource(DEFAULT_AUDIO_SOURCE);
-        mediaRecorder.setOutputFormat(DEFAULT_OUTPUT_FORMAT);
-        File dir = new File(DEFAUL_OUTPUT_FILE);
-        if(!dir.exists()){
-            dir.mkdirs();
-        }
-//        Log.e(TAG,"dir is exist->"+(dir.exists()));
-        File file  = new File(DEFAUL_OUTPUT_FILE + File.separator + System.currentTimeMillis()+".arm");
-        if(!file.exists()){
-            try {
-                file.createNewFile();
-                Log.e(TAG, "new file");
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e(TAG, e.getMessage());
-            }
-        }
-        mediaRecorder.setOutputFile(file.getAbsolutePath());
-        mediaRecorder.setAudioEncoder(DEFAULT_AUDIO_ENCODER);
-        prepareRecorder();
-    }
-
-    private void prepareRecorder(){
-        try {
-            mediaRecorder.prepare();
-            isPrepared = true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG,e.getMessage());
-        }
-    }
-
-    private boolean isRecording = false;
-
-    @Override
-    public void onClick(View view) {
-        switch(view.getId()){
-            case R.id.chat_record_btn:
-
-                    if(!isRecording) {
-                        if(isPrepared) {
-                            mediaRecorder.start();
-                            showMessage("开始录音");
-                            isRecording = true;
-                        }else{
-                            showMessage("mediaRecorder 未prepare");
-                            isRecording = false;
-                            prepareRecorder();
-                        }
-                    }else{
-                        mediaRecorder.stop();
-                        showMessage("停止录音");
-
-                        //send record to network
-
-
-
-                        mediaRecorder.reset();
-                        initRecorder();
-                    }
-//                    isRecording = !isRecording;
-                break;
-        }
-    }
-
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -194,15 +122,16 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     }
 
     private void initEM(){
-        String usernmae = curChatingBean.getIMUsername();
-        try {
-            List<String> usernames = IMManager.getInstance(this).getFriendsList();
+        String username = curChatingBean.getIMUsername();
+        List<EMMessage> history = IMManager.getInstance(this).getChatHistory(username);
+        List<VoiceBean> beans = IMFilter.devideByTimeTitle(history, username);
+        mList.addAll(beans);
+        mAdapter.notifyDataSetChanged();
+    }
 
-            //get info from our server
 
-        } catch (HyphenateException e) {
-            e.printStackTrace();
-        }
+    private String filterToPhone(String imUsername){
+        return imUsername.replace(EMConstants.PATIENT_USERNAME_PREFIX,"").replace(EMConstants.DOCTOR_USERNAME_PREFIX, "");
     }
 
     @Override
@@ -240,9 +169,10 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
 
     @Override
     public void onVoiceClick(EMVoiceMessageBody body, int position) {
-        //body.getRemoteUrl();
-        //body.getLocalUrl();
+        PlayTask task = new PlayTask(body);
+        MediaExectutor.getInstance().executePlayTask(task);
     }
+
 
 
     private boolean isLongClick = false;
@@ -250,6 +180,21 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     @Override
     public boolean onLongClick(View view) {
         isLongClick = true;
+        switch(view.getId()){
+            case R.id.chat_record_btn:
+                final RecorderStateMachine machine = rsMachine;
+                machine.initRecorder();
+                if(!machine.isRecording()) {
+                    mRecordBtn.setLongClickable(false);
+                    if(machine.isPrepared()) {
+                        machine.startRecorder();
+                        showMessage("开始录音");
+                    }
+                }else{
+
+                }
+                break;
+        }
         return true;
     }
 
@@ -266,12 +211,40 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
                 return false;
             case MotionEvent.ACTION_UP:
                 //check whether is longclick
-                break;
+                if(isLongClick){
+                    //end to record
+                    rsMachine.stopRecorder(false);
+                    showMessage("停止录音");
+                    return true;
+                }
+                return false;
             case MotionEvent.ACTION_MOVE:
+                isLongClick = false;
+
                 return true;
             case MotionEvent.ACTION_CANCEL:
+                isLongClick = false;
+                //end to record and delete the recording file
+                rsMachine.stopRecorder(true);
+
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void onStop(File recordingFile, boolean cancelRecord) {
+        if(cancelRecord && recordingFile != null) {
+            //delete the recording file
+            recordingFile.delete();
+
+        }else  if(recordingFile != null && curChatingBean != null) {
+            //send record to network
+            String filePath = recordingFile.getAbsolutePath();
+            long length = recordingFile.length();
+            String imUsername = curChatingBean.getIMUsername();
+            RecordTask task = new RecordTask(filePath, (int)length, imUsername);
+            MediaExectutor.getInstance().executeRecordTask(task);
+        }
     }
 }
