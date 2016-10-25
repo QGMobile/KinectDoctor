@@ -25,6 +25,7 @@
             tools:src="@drawable/person_info_selector"
             android:layout_centerVertical="true"/>
         <TextView
+            android:id="@+id/center_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="25dp"

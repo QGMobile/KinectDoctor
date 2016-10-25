@@ -36,14 +36,14 @@ public class ChatActivity extends BaseActivity implements EMMessageListener{
         activity.startActivityForResult(intent, requestCode);
     }
 
-    private Button recordBtn;
+//    private Button recordBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        recordBtn = (Button)findViewById(R.id.record_btn);
-        recordBtn.setOnClickListener(this);
+//        recordBtn = (Button)findViewById(R.id.record_btn);
+//        recordBtn.setOnClickListener(this);
         File dir = new File(DEFAUL_OUTPUT_FILE);
         if(!dir.exists()){
             boolean success = dir.mkdirs();
@@ -130,6 +130,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener{
                 break;
         }
     }
+
+
 
     @Override
     protected void onDestroy() {
