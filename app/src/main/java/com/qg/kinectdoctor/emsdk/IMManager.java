@@ -104,9 +104,10 @@ public class IMManager {
         EMClient.getInstance().logout(false);
     }
 
-    public void sendVoiceMessage(String filePath, int length, String toChatUsername){
+    public void sendVoiceMessage(String filePath, int length, String toChatUsername, EMCallBack callBack){
         EMMessage message = EMMessage.createVoiceSendMessage(filePath, length, toChatUsername);
         message.setChatType(EMMessage.ChatType.Chat);
+        message.setMessageStatusCallback(callBack);
         EMClient.getInstance().chatManager().sendMessage(message);
     }
 

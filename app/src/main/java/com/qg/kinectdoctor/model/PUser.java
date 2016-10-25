@@ -1,9 +1,11 @@
 package com.qg.kinectdoctor.model;
 
+import java.io.Serializable;
+
 /**
  * Created by ZH_L on 2016/10/22.
  */
-public class PUser {
+public class PUser implements Serializable{
     private int id;
     private int age;
     private String name;

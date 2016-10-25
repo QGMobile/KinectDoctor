@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@color/color_grey">
+
+    <Button
+        android:id="@+id/doctor_voice_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/doctor_voice_normal" />
+
+    <TextView
+        android:id="@+id/time_length_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/doctor_voice_btn"
+        android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@id/doctor_voice_btn"
+        android:textSize="12dp"
+        tools:text="45''" />
+</RelativeLayout>
+
