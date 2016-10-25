@@ -24,12 +24,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        ChatListFragment fragment = new ChatListFragment();
-//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        transaction.replace(android.R.id.content, fragment);
-//        transaction.commit();
 
-        test(this, (TextView)findViewById(R.id.tv));
     }
 
     public static void test(final Context context, final TextView tv){

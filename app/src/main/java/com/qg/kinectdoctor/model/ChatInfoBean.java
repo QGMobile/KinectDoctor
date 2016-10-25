@@ -1,21 +1,24 @@
 package com.qg.kinectdoctor.model;
 
+import com.qg.kinectdoctor.emsdk.EMConstants;
+import com.qg.kinectdoctor.emsdk.IMManager;
+
 /**
  * Created by ZH_L on 2016/10/21.
  */
 public class ChatInfoBean {
     private PUser pUser;
-    private int unReadCount;
-
-    public ChatInfoBean(PUser pUser, int unReadCount){
-        this.pUser = pUser;
-        this.unReadCount = unReadCount;
-    }
+//    private int unReadCount;
 
     public ChatInfoBean(PUser pUser){
         this.pUser = pUser;
-        this.unReadCount = 0;
+//        this.unReadCount = unReadCount;
     }
+
+//    public ChatInfoBean(PUser pUser){
+//        this.pUser = pUser;
+//        this.unReadCount = 0;
+//    }
 
     public void setPUser(PUser pUser){
         this.pUser = pUser;
@@ -25,13 +28,33 @@ public class ChatInfoBean {
         return pUser;
     }
 
-    public int getUnReadCount() {
-        return unReadCount;
+//    public int getUnReadCount() {
+//        return unReadCount;
+//    }
+
+//    public void setUnReadCount(int unReadCount) {
+//        this.unReadCount = unReadCount;
+//    }
+
+    public String getIMUsername(){
+        if(pUser == null){
+            throw new NullPointerException("PUser is null");
+        }
+        return EMConstants.PATIENT_USERNAME_PREFIX + pUser.getPhone();
     }
 
-    public void setUnReadCount(int unReadCount) {
-        this.unReadCount = unReadCount;
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == this){
+            return true;
+        }else if(obj instanceof ChatInfoBean){
+            ChatInfoBean bean = (ChatInfoBean)obj;
+            return bean.getIMUsername().equals(getIMUsername());
+        }
+        return false;
     }
 
+    public void clearUnReadCount(){
 
+    }
 }

@@ -1,6 +1,7 @@
 package com.qg.kinectdoctor.fragment;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -71,9 +72,9 @@ public class ChatListFragment extends BaseFragment implements ChatListAdapter.On
     }
 
     private void test(){
-        ChatInfoBean bean = new ChatInfoBean( null,10);
-        mList.add(bean);
-        mAdapter.notifyDataSetChanged();
+//        ChatInfoBean bean = new ChatInfoBean( null,10);
+//        mList.add(bean);
+//        mAdapter.notifyDataSetChanged();
     }
 
 
@@ -100,16 +101,20 @@ public class ChatListFragment extends BaseFragment implements ChatListAdapter.On
     public void onChatItemClick(View v, int position) {
         ChatInfoBean bean = mList.get(position);
         curChatingBean  = bean;
+        mAdapter.clearUnReadCount(bean);
         ChatActivity.startForResult(getActivity(), EMConstants.REQCODE_START_CHAT);
     }
 
     @Override
     public void onMessageReceived(List<EMMessage> list) {
         if(list == null)return;
-        for(EMMessage message:list){
-            String fromWho = message.getFrom();
-            String fromPhone = filterUsernameToPhone(fromWho);
 
+        //显示所有联系人的消息收到状态
+        mAdapter.notifyDataSetChanged();
+
+        //把正在聊天的人的未读消息清零
+        if(curChatingBean != null){
+            mAdapter.clearUnReadCount(curChatingBean);
         }
     }
 
@@ -141,13 +146,21 @@ public class ChatListFragment extends BaseFragment implements ChatListAdapter.On
     @Override
     public void onContactAdded(String username) {
         //增加了某个联系人
-
+        //PUser pUser = getFromServer
+        //ChatInfoBean bean = new ChatInfoBean(pUser);
+//        if(!mList.contains(bean)){
+//            mList.add(bean);
+//            mAdapter.notifyDataSetChanged();
+//        }
     }
 
     @Override
     public void onContactDeleted(String username) {
         //被删除时调用
-
+        //PUser pUser = getFromServer
+        //ChatInfoBean bean = new ChatInfoBean(pUser);
+        //mList.remove(bean);
+        //mAdapter.notifyDataSetChanged();
     }
 
     @Override

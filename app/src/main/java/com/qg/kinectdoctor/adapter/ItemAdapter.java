@@ -12,11 +12,14 @@ import java.util.List;
  * Created by ZH_L on 2016/10/21.
  */
 public abstract class ItemAdapter<E, VH extends ItemViewHolder> extends RecyclerView.Adapter<VH>{
+    protected Context context;
     private List<E> mList;
     private LayoutInflater mInflater;
     private int mLayoutId;
 
+
     public ItemAdapter(Context context, List list, int layoutId){
+        this.context = context;
         mInflater = LayoutInflater.from(context);
         mList = list;
         mLayoutId = layoutId;

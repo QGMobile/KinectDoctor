@@ -3,8 +3,10 @@ package com.qg.kinectdoctor.activity;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,6 +34,11 @@ public class App extends Application {
             // 则此application::onCreate 是被service 调用的，直接返回
             return;
         }
+
+//        File dir = new File(Environment.getExternalStorageDirectory()+File.separator+getPackageName()+"voice");
+//        if(!dir.exists()){
+//            dir.mkdirs();
+//        }
     }
 
     private String getAppName(int pID) {

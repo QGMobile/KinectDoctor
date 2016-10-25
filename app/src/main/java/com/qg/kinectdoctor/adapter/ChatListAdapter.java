@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.qg.kinectdoctor.R;
+import com.qg.kinectdoctor.emsdk.IMManager;
 import com.qg.kinectdoctor.fragment.ChatListFragment;
 import com.qg.kinectdoctor.model.ChatInfoBean;
 import com.qg.kinectdoctor.model.PUser;
@@ -20,9 +21,11 @@ import java.util.List;
 public class ChatListAdapter extends ItemAdapter<ChatInfoBean, ChatListAdapter.ChatInfoHolder>{
 
     private static final String TAG = ChatListAdapter.class.getSimpleName();
+    private List<ChatInfoBean> list;
 
-    public ChatListAdapter(Context context, List list, int layoutId) {
+    public ChatListAdapter(Context context, List<ChatInfoBean> list, int layoutId) {
         super(context, list, layoutId);
+        this.list = list;
     }
 
     @Override
@@ -55,7 +58,8 @@ public class ChatListAdapter extends ItemAdapter<ChatInfoBean, ChatListAdapter.C
         public void bindElement(ChatInfoBean bean) {
             PUser pUser = bean.getPUser();
             nameTv.setText(pUser.getName());
-            int unReadCount = bean.getUnReadCount();
+            String username = bean.getIMUsername();
+            int unReadCount = IMManager.getInstance(context).getUnreadMsgCount(username);
             if(unReadCount <= 0 ){
                 unReadTv.setVisibility(View.GONE);
                 unReadTv.setText("");
@@ -78,4 +82,13 @@ public class ChatListAdapter extends ItemAdapter<ChatInfoBean, ChatListAdapter.C
         void onChatItemClick(View v, int position);
     }
 
+
+    public void clearUnReadCount(ChatInfoBean bean){
+        if(!list.contains(bean)){
+            throw new RuntimeException("the ChatInfoBean is not in the DataSource List");
+        }
+        String username = bean.getIMUsername();
+        IMManager.getInstance(context).clearUnReadMsg(username);
+        notifyDataSetChanged();
+    }
 }
