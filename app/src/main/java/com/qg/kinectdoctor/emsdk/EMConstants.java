@@ -11,9 +11,14 @@ public class EMConstants {
 
     public static final String PATIENT_USERNAME_PREFIX = "p";
 
-    public static int REQCODE_START_CHAT = 1;
+    public static final int REQCODE_START_CHAT = 1;
 
-    public static int VIEWTYPE_TIME = 0x01;     //代表消息时间
-    public static int VIEWTYPE_SOMEONE = 0x02;  //代表对方
-    public static int VIEWTYPE_ME = 0x03;       //代表自己
+    public static final String EXTRA_FROM_CHAT_CONTACT_LIST = "fromChatContactList";
+    public static final String KEY_CHATINFO_BEAN = "chatInfoBean";
+
+    public static final int VIEWTYPE_TIME = 0x01;     //代表消息时间
+    public static final int VIEWTYPE_SOMEONE = 0x02;  //代表对方
+    public static final int VIEWTYPE_ME = 0x03;       //代表自己
+
+
 }

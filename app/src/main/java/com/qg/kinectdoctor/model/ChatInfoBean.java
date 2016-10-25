@@ -3,10 +3,12 @@ package com.qg.kinectdoctor.model;
 import com.qg.kinectdoctor.emsdk.EMConstants;
 import com.qg.kinectdoctor.emsdk.IMManager;
 
+import java.io.Serializable;
+
 /**
  * Created by ZH_L on 2016/10/21.
  */
-public class ChatInfoBean {
+public class ChatInfoBean implements Serializable{
     private PUser pUser;
 //    private int unReadCount;
 

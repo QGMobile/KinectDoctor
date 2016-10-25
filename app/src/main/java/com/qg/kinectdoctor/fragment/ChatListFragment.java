@@ -1,7 +1,6 @@
 package com.qg.kinectdoctor.fragment;
 
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,19 +10,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hyphenate.EMCallBack;
 import com.hyphenate.EMContactListener;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.exceptions.HyphenateException;
 import com.qg.kinectdoctor.R;
 import com.qg.kinectdoctor.activity.ChatActivity;
-import com.qg.kinectdoctor.adapter.ChatListAdapter;
+import com.qg.kinectdoctor.adapter.ChatContactListAdapter;
 import com.qg.kinectdoctor.emsdk.EMConstants;
-import com.qg.kinectdoctor.emsdk.IMCallback;
 import com.qg.kinectdoctor.emsdk.IMManager;
 import com.qg.kinectdoctor.model.ChatInfoBean;
-import com.qg.kinectdoctor.util.ActivityCollector;
 import com.qg.kinectdoctor.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -32,13 +28,13 @@ import java.util.List;
 /**
  * Created by ZH_L on 2016/10/21.
  */
-public class ChatListFragment extends BaseFragment implements ChatListAdapter.OnChatItemClickListener, EMMessageListener, EMContactListener{
+public class ChatListFragment extends BaseFragment implements ChatContactListAdapter.OnChatItemClickListener, EMMessageListener, EMContactListener{
 
     private static final String TAG = ChatListFragment.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
     private List<ChatInfoBean> mList;
-    private ChatListAdapter mAdapter;
+    private ChatContactListAdapter mAdapter;
 
     @Nullable
     @Override
@@ -56,7 +52,7 @@ public class ChatListFragment extends BaseFragment implements ChatListAdapter.On
 
     private void initRecyclerView(){
         mList = new ArrayList<>();
-        mAdapter = new ChatListAdapter(getActivity(), mList, R.layout.item_chatlist);
+        mAdapter = new ChatContactListAdapter(getActivity(), mList, R.layout.item_chatlist);
         mAdapter.setOnChatItemClickListener(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
@@ -102,7 +98,9 @@ public class ChatListFragment extends BaseFragment implements ChatListAdapter.On
         ChatInfoBean bean = mList.get(position);
         curChatingBean  = bean;
         mAdapter.clearUnReadCount(bean);
-        ChatActivity.startForResult(getActivity(), EMConstants.REQCODE_START_CHAT);
+        Bundle extra = new Bundle();
+        extra.putSerializable(EMConstants.KEY_CHATINFO_BEAN, bean);
+        ChatActivity.startForResult(getActivity(),extra,EMConstants.REQCODE_START_CHAT);
     }
 
     @Override

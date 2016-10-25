@@ -1,15 +1,12 @@
 package com.qg.kinectdoctor.adapter;
 
 import android.content.Context;
-import android.support.v7.view.menu.MenuView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.qg.kinectdoctor.R;
 import com.qg.kinectdoctor.emsdk.IMManager;
-import com.qg.kinectdoctor.fragment.ChatListFragment;
 import com.qg.kinectdoctor.model.ChatInfoBean;
 import com.qg.kinectdoctor.model.PUser;
 
@@ -18,12 +15,12 @@ import java.util.List;
 /**
  * Created by ZH_L on 2016/10/21.
  */
-public class ChatListAdapter extends ItemAdapter<ChatInfoBean, ChatListAdapter.ChatInfoHolder>{
+public class ChatContactListAdapter extends ItemAdapter<ChatInfoBean, ChatContactListAdapter.ChatInfoHolder>{
 
-    private static final String TAG = ChatListAdapter.class.getSimpleName();
+    private static final String TAG = ChatContactListAdapter.class.getSimpleName();
     private List<ChatInfoBean> list;
 
-    public ChatListAdapter(Context context, List<ChatInfoBean> list, int layoutId) {
+    public ChatContactListAdapter(Context context, List<ChatInfoBean> list, int layoutId) {
         super(context, list, layoutId);
         this.list = list;
     }

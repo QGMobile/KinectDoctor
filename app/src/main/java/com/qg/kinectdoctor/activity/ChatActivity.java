@@ -2,33 +2,38 @@ package com.qg.kinectdoctor.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.PersistableBundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMVoiceMessageBody;
-import com.hyphenate.chat.adapter.message.EMAMessage;
-import com.hyphenate.chat.adapter.message.EMAVoiceMessageBody;
+import com.hyphenate.exceptions.HyphenateException;
 import com.qg.kinectdoctor.R;
-import com.qg.kinectdoctor.adapter.ChatListAdapter;
+import com.qg.kinectdoctor.adapter.ChatAdapter;
 import com.qg.kinectdoctor.emsdk.EMConstants;
+import com.qg.kinectdoctor.emsdk.IMManager;
+import com.qg.kinectdoctor.model.ChatInfoBean;
+import com.qg.kinectdoctor.model.VoiceBean;
 import com.qg.kinectdoctor.util.ToastUtil;
+import com.qg.kinectdoctor.view.TopbarL;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by ZH_L on 2016/10/22.
  */
-public class ChatActivity extends BaseActivity implements EMMessageListener{
+public class ChatActivity extends BaseActivity implements EMMessageListener, ChatAdapter.OnItemVoiceClickListener, View.OnLongClickListener, View.OnTouchListener{
     private static final String TAG = ChatActivity.class.getSimpleName();
 
     public static void startForResult(Activity activity, int requestCode){
@@ -36,34 +41,78 @@ public class ChatActivity extends BaseActivity implements EMMessageListener{
         activity.startActivityForResult(intent, requestCode);
     }
 
-//    private Button recordBtn;
+    public static void startForResult(Activity activity, Bundle b,int requestCode){
+        Intent intent = new Intent(activity, ChatActivity.class);
+        intent.putExtra(EMConstants.EXTRA_FROM_CHAT_CONTACT_LIST, b);
+        activity.startActivityForResult(intent, requestCode);
+    }
 
+    private TopbarL mTopbar;
+    private Button mRecordBtn;
+    private RecyclerView mRecyclerView;
+    private List<VoiceBean> mList;
+    private ChatAdapter  mAdapter;
+
+    private ChatInfoBean curChatingBean;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-//        recordBtn = (Button)findViewById(R.id.record_btn);
-//        recordBtn.setOnClickListener(this);
-        File dir = new File(DEFAUL_OUTPUT_FILE);
-        if(!dir.exists()){
-            boolean success = dir.mkdirs();
-            if(success){
-                Log.e(TAG, "create dir success");
-            }else{
-                Log.e(TAG, "create dir failed");
-            }
-            Log.e(TAG,"mkdirs");
-        }
-        Log.e(TAG, "dir exist->"+(dir.exists()));
+        Bundle b = getIntent().getBundleExtra(EMConstants.EXTRA_FROM_CHAT_CONTACT_LIST);
+        curChatingBean = (ChatInfoBean) b.getSerializable(EMConstants.KEY_CHATINFO_BEAN);
+
+        initUI();
+        initEM();
         mediaRecorder = new MediaRecorder();
         initRecorder();
 //        recordBtn.performClick();
     }
 
+    private void initUI(){
+        mTopbar = (TopbarL) findViewById(R.id.chat_topbar);
+        initTopbar();
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.chat_recyclerview);
+        initRecyclerView();
+
+        mRecordBtn = (Button) findViewById(R.id.chat_record_btn);
+        mRecordBtn.setOnClickListener(this);
+    }
+
+    private void initTopbar(){
+        mTopbar.setLeftImage(true, R.drawable.back_selector, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        mTopbar.setRightImage(true, R.drawable.person_info_selector, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //jump to where
+            }
+        });
+
+        mTopbar.setCenterText(true, curChatingBean.getPUser().getName(), null);
+    }
+
+    private void initRecyclerView(){
+        mList = new ArrayList<>();
+        mAdapter = new ChatAdapter(this, mList);
+        mAdapter.setOnItemVoiceClickListener(this);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+
+
+
     private static final int DEFAULT_AUDIO_SOURCE = MediaRecorder.AudioSource.MIC;
     private static final int DEFAULT_OUTPUT_FORMAT =  MediaRecorder.OutputFormat.AMR_NB;
     private static final String DEFAUL_OUTPUT_FILE = Environment.getExternalStorageDirectory()+File.separator+App.getInstance().getPackageName()+ File.separator+"voice";
     private static final int DEFAULT_AUDIO_ENCODER = MediaRecorder.AudioEncoder.AMR_NB;
+
 
     private MediaRecorder mediaRecorder;
     private boolean isPrepared = false;
@@ -108,7 +157,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener{
     @Override
     public void onClick(View view) {
         switch(view.getId()){
-            case R.id.record_btn:
+            case R.id.chat_record_btn:
 
                     if(!isRecording) {
                         if(isPrepared) {
@@ -123,6 +172,11 @@ public class ChatActivity extends BaseActivity implements EMMessageListener{
                     }else{
                         mediaRecorder.stop();
                         showMessage("停止录音");
+
+                        //send record to network
+
+
+
                         mediaRecorder.reset();
                         initRecorder();
                     }
@@ -140,7 +194,15 @@ public class ChatActivity extends BaseActivity implements EMMessageListener{
     }
 
     private void initEM(){
+        String usernmae = curChatingBean.getIMUsername();
+        try {
+            List<String> usernames = IMManager.getInstance(this).getFriendsList();
 
+            //get info from our server
+
+        } catch (HyphenateException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -174,5 +236,42 @@ public class ChatActivity extends BaseActivity implements EMMessageListener{
 
     private void showMessage(String text){
         ToastUtil.showToast(this, text);
+    }
+
+    @Override
+    public void onVoiceClick(EMVoiceMessageBody body, int position) {
+        //body.getRemoteUrl();
+        //body.getLocalUrl();
+    }
+
+
+    private boolean isLongClick = false;
+
+    @Override
+    public boolean onLongClick(View view) {
+        isLongClick = true;
+        return true;
+    }
+
+
+    //handle record button 's gesture action, longclick to record
+    //up to check whether is longclick,if true send record, else cancel
+    //
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        int action = motionEvent.getAction();
+        switch(action){
+            case MotionEvent.ACTION_DOWN:
+                //give longclick to handle
+                return false;
+            case MotionEvent.ACTION_UP:
+                //check whether is longclick
+                break;
+            case MotionEvent.ACTION_MOVE:
+                return true;
+            case MotionEvent.ACTION_CANCEL:
+                return true;
+        }
+        return false;
     }
 }
