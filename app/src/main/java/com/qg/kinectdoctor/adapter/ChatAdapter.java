@@ -2,6 +2,7 @@ package com.qg.kinectdoctor.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,8 +91,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
 
         @Override
         public void bindElement(VoiceBean bean) {
-            switch(getItemViewType()){
+            switch(bean.getType()){
                 case EMConstants.VIEWTYPE_TIME:
+                    Log.e(TAG, "timeTv==null->"+(timeTv==null));
                     timeTv.setText(bean.getTime());
                     break;
                 case EMConstants.VIEWTYPE_SOMEONE:
@@ -109,9 +111,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
             }
         }
 
+
         @Override
         public void initChilds(View itemView) {
-            switch(getItemViewType()){
+            switch(ChatAdapter.this.getItemViewType(getPosition())){
                 case EMConstants.VIEWTYPE_TIME:
                     timeTv = (TextView)itemView.findViewById(R.id.time_tv);
                     break;

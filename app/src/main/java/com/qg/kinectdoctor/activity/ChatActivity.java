@@ -124,6 +124,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     private void initEM(){
         String username = curChatingBean.getIMUsername();
         List<EMMessage> history = IMManager.getInstance(this).getChatHistory(username);
+        if(history != null){
+            Log.e(TAG, "message-size->"+history.size());
+        }
         List<VoiceBean> beans = IMFilter.devideByTimeTitle(history, username);
         mList.addAll(beans);
         mAdapter.notifyDataSetChanged();
@@ -136,6 +139,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
 
     @Override
     public void onMessageReceived(List<EMMessage> list) {
+        Log.e(TAG, "onMessageReceived");
         if(list == null) return;
         for(EMMessage message: list){
             EMVoiceMessageBody voice = (EMVoiceMessageBody) message.getBody();
@@ -179,6 +183,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
 
     @Override
     public boolean onLongClick(View view) {
+        Log.e(TAG, "onLongClick");
         isLongClick = true;
         switch(view.getId()){
             case R.id.chat_record_btn:
@@ -207,9 +212,11 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         int action = motionEvent.getAction();
         switch(action){
             case MotionEvent.ACTION_DOWN:
+                Log.e(TAG, "action down");
                 //give longclick to handle
                 return false;
             case MotionEvent.ACTION_UP:
+                Log.e(TAG, "action up");
                 //check whether is longclick
                 if(isLongClick){
                     //end to record
@@ -219,10 +226,12 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
                 }
                 return false;
             case MotionEvent.ACTION_MOVE:
-                isLongClick = false;
+                Log.e(TAG, "action move");
+//                isLongClick = false;
 
                 return true;
             case MotionEvent.ACTION_CANCEL:
+                Log.e(TAG, "action cancel");
                 isLongClick = false;
                 //end to record and delete the recording file
                 rsMachine.stopRecorder(true);
@@ -234,6 +243,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
 
     @Override
     public void onStop(File recordingFile, boolean cancelRecord) {
+        isLongClick = false;
+        mRecordBtn.setLongClickable(true);
         if(cancelRecord && recordingFile != null) {
             //delete the recording file
             recordingFile.delete();

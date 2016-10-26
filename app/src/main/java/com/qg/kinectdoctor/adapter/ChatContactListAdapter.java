@@ -1,6 +1,7 @@
 package com.qg.kinectdoctor.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -55,8 +56,10 @@ public class ChatContactListAdapter extends ItemAdapter<ChatInfoBean, ChatContac
         public void bindElement(ChatInfoBean bean) {
             PUser pUser = bean.getPUser();
             nameTv.setText(pUser.getName());
+            Log.e(TAG, "bindElement->name:"+pUser.getName());
             String username = bean.getIMUsername();
             int unReadCount = IMManager.getInstance(context).getUnreadMsgCount(username);
+            Log.e(TAG, "bindElement->unRead:"+unReadCount);
             if(unReadCount <= 0 ){
                 unReadTv.setVisibility(View.GONE);
                 unReadTv.setText("");
