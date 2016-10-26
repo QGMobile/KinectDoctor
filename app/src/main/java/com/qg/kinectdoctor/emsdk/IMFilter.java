@@ -45,7 +45,7 @@ public class IMFilter {
         long time = calendar.getTimeInMillis();
 
         final List<EMMessage> msgs = messages;
-        int index = msgs.size();
+        int index = msgs.size()-1;
         for(int i=index; i>=0 ; i--){
             EMMessage msg = msgs.get(i);
 

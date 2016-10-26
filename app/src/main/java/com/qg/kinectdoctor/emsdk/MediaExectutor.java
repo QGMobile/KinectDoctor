@@ -12,6 +12,8 @@ public class MediaExectutor {
     private MediaExectutor(){
         mpWorker = new MediaPlayWorker();
         mrWorker = new MediaRecordWorker();
+        mpWorker.start();
+        mrWorker.start();
     }
 
     private static MediaExectutor instance;
