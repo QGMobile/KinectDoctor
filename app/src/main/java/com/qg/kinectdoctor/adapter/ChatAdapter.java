@@ -131,8 +131,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
             EMVoiceMessageBody body = null;
             switch(view.getId()){
                 case R.id.patient_voice_btn:
+                    patientBtn.setClickable(false);
+                    patientBtn.setBackgroundResource(R.drawable.patient_voice_click);
                     body  = (EMVoiceMessageBody) patientBtn.getTag();
+                    break;
                 case R.id.doctor_voice_btn:
+                    doctorBtn.setClickable(false);
+                    doctorBtn.setBackgroundResource(R.drawable.doctor_voice_click);
                     body = (EMVoiceMessageBody) doctorBtn.getTag();
                     break;
             }
