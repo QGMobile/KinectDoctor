@@ -3,8 +3,12 @@ package com.qg.kinectdoctor.logic;
 import android.os.AsyncTask;
 
 import com.qg.kinectdoctor.http.HttpProcess;
+import com.qg.kinectdoctor.param.GetDUserByPhoneParam;
+import com.qg.kinectdoctor.param.GetPUserByPhoneParam;
 import com.qg.kinectdoctor.param.LoginParam;
 import com.qg.kinectdoctor.param.Param;
+import com.qg.kinectdoctor.result.GetDUserByPhoneResult;
+import com.qg.kinectdoctor.result.GetPUserByPhoneResult;
 import com.qg.kinectdoctor.result.LoginResult;
 import com.qg.kinectdoctor.result.Result;
 import com.qg.kinectdoctor.util.CommandUtil;
@@ -74,5 +78,15 @@ public class LogicImpl implements Logic{
     @Override
     public void login(LoginParam param, LogicHandler<LoginResult> handler) {
         getResult(param, handler, LoginResult.class);
+    }
+
+    @Override
+    public void getDUserByPhoneParam(GetDUserByPhoneParam param, LogicHandler<GetDUserByPhoneResult> handler) {
+        getResult(param, handler, GetDUserByPhoneResult.class);
+    }
+
+    @Override
+    public void getPUserByPhoneParam(GetPUserByPhoneParam param, LogicHandler<GetPUserByPhoneResult> handler) {
+        getResult(param, handler, GetPUserByPhoneResult.class);
     }
 }
