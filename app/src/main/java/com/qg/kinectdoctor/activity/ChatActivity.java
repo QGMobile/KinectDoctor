@@ -202,6 +202,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
                     mRecordBtn.setLongClickable(false);
                     if(machine.isPrepared()) {
                         machine.startRecorder();
+
                         showMessage("开始录音");
                     }
                 }else{
@@ -246,7 +247,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     }
 
     @Override
-    public void onStop(File recordingFile, boolean cancelRecord) {
+    public void onStop(File recordingFile, boolean cancelRecord, long recordDuration) {
         isLongClick = false;
         mRecordBtn.setLongClickable(true);
         if(cancelRecord && recordingFile != null) {
@@ -255,9 +256,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
 
         }else  if(recordingFile != null && curChatingBean != null) {
             //send record to network
-            String filePath = recordingFile.getAbsolutePath();
-            long length = recordingFile.length();
-            String imUsername = curChatingBean.getIMUsername();
+            final String filePath = recordingFile.getAbsolutePath();
+            final long length = recordDuration;
+            final String imUsername = curChatingBean.getIMUsername();
             RecordTask task = new RecordTask(filePath, (int)length, imUsername);
             MediaExectutor.getInstance().executeRecordTask(task);
         }
