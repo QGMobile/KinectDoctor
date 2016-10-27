@@ -11,7 +11,9 @@ import android.view.View;
 import android.widget.Button;
 
 import com.hyphenate.EMMessageListener;
+import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
+import com.hyphenate.chat.EMVoiceMessageBody;
 import com.qg.kinectdoctor.R;
 import com.qg.kinectdoctor.adapter.ChatAdapter;
 import com.qg.kinectdoctor.emsdk.EMConstants;
@@ -19,6 +21,7 @@ import com.qg.kinectdoctor.emsdk.IMFilter;
 import com.qg.kinectdoctor.emsdk.IMManager;
 import com.qg.kinectdoctor.emsdk.MediaExectutor;
 import com.qg.kinectdoctor.emsdk.MediaPlayWorker;
+import com.qg.kinectdoctor.emsdk.MediaRecordWorker;
 import com.qg.kinectdoctor.emsdk.PlayTask;
 import com.qg.kinectdoctor.emsdk.RecordTask;
 import com.qg.kinectdoctor.model.ChatInfoBean;
@@ -35,7 +38,7 @@ import java.util.List;
 /**
  * Created by ZH_L on 2016/10/22.
  */
-public class ChatActivity extends BaseActivity implements EMMessageListener, ChatAdapter.OnItemVoiceClickListener, View.OnLongClickListener, View.OnTouchListener, RecorderStateMachine.RecorderStateMachineListener, MediaPlayWorker.PlayStatusChangedListener{
+public class ChatActivity extends BaseActivity implements EMMessageListener, ChatAdapter.OnItemVoiceClickListener, View.OnLongClickListener, View.OnTouchListener, RecorderStateMachine.RecorderStateMachineListener, MediaPlayWorker.PlayStatusChangedListener, MediaRecordWorker.MediaRecordListener{
     private static final String TAG = ChatActivity.class.getSimpleName();
 
     public static void startForResult(Activity activity, int requestCode){
@@ -71,6 +74,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         rsMachine = new RecorderStateMachine();
         rsMachine.setRecorderStateMachineListener(this);
         MediaExectutor.getInstance().setPlayStatusChangedListener(this);
+        MediaExectutor.getInstance().setMediaRecordListener(this);
     }
 
     private void initUI(){
@@ -115,7 +119,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        setResult(EMConstants.REQCODE_START_CHAT);
+//        setResult(EMConstants.REQCODE_START_CHAT);
+        Intent intent = new Intent(EMConstants.ACTION_CHAT_ACTIVITY_FINISH);
+        sendBroadcast(intent);
     }
 
     private void initEM(){
@@ -265,6 +271,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
             final String filePath = recordingFile.getAbsolutePath();
             final long length = recordDuration;
             final String imUsername = curChatingBean.getIMUsername();
+
             RecordTask task = new RecordTask(filePath, (int)length, imUsername);
             MediaExectutor.getInstance().executeRecordTask(task);
         }
@@ -290,5 +297,27 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
                 showMessage(nowStatus.getErrMsg());
                 break;
         }
+    }
+
+    @Override
+    public void onSuccess(EMMessage message) {
+        Log.e(TAG," sendMessage->onSuccess");
+        List<EMMessage> list = new ArrayList<>();
+        list.add(message);
+        List<VoiceBean> beans = IMFilter.devideByTimeTitle(list, message.getTo());
+        mList.addAll(beans);
+        mAdapter.notifyDataSetChanged();
+        mRecyclerView.smoothScrollToPosition(mList.size()-1);
+    }
+
+    @Override
+    public void onError(int code, String errMsg) {
+        Log.e(TAG,"sendMessage->onError:"+errMsg);
+        showMessage(errMsg);
+    }
+
+    @Override
+    public void onProgressing(int progress, String status) {
+        Log.e(TAG, "sendMessage->onProgressing-"+progress+",status:"+status);
     }
 }
