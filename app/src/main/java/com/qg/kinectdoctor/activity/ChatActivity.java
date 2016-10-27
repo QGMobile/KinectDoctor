@@ -2,9 +2,7 @@ package com.qg.kinectdoctor.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,10 +11,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.hyphenate.EMMessageListener;
-import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
-import com.hyphenate.chat.EMVoiceMessageBody;
-import com.hyphenate.exceptions.HyphenateException;
 import com.qg.kinectdoctor.R;
 import com.qg.kinectdoctor.adapter.ChatAdapter;
 import com.qg.kinectdoctor.emsdk.EMConstants;
@@ -29,12 +24,11 @@ import com.qg.kinectdoctor.emsdk.RecordTask;
 import com.qg.kinectdoctor.model.ChatInfoBean;
 import com.qg.kinectdoctor.model.VoiceBean;
 import com.qg.kinectdoctor.util.CommandUtil;
-import com.qg.kinectdoctor.util.RecorderStateMachine;
+import com.qg.kinectdoctor.emsdk.RecorderStateMachine;
 import com.qg.kinectdoctor.util.ToastUtil;
 import com.qg.kinectdoctor.view.TopbarL;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

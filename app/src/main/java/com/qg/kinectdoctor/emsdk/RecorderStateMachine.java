@@ -1,4 +1,4 @@
-package com.qg.kinectdoctor.util;
+package com.qg.kinectdoctor.emsdk;
 
 import android.media.MediaRecorder;
 import android.os.Environment;
