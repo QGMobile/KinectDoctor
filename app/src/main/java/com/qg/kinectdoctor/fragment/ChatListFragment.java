@@ -1,6 +1,9 @@
 package com.qg.kinectdoctor.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.Nullable;
@@ -55,6 +58,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
             mRecyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
             initRecyclerView();
             initEM();
+            initReceiver();
 //            getDataFromServer();
 
             loginEM();
@@ -83,6 +87,23 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
 
             }
         });
+    }
+
+
+    private ChatInfoBean curChatingBean = null;
+    private BroadcastReceiver mReceiver;
+
+
+    private void initReceiver(){
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                curChatingBean = null;
+            }
+        };
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(EMConstants.ACTION_CHAT_ACTIVITY_FINISH);
+        getActivity().registerReceiver(mReceiver, filter);
     }
 
     private void getDataFromServer(){
@@ -146,15 +167,23 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
         IMManager.getInstance(getActivity()).setContactListener(this);
     }
 
-
-    private ChatInfoBean curChatingBean = null;
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == EMConstants.REQCODE_START_CHAT){
-            Log.d(TAG,"onActivityResult");
-            curChatingBean = null;
+    public void onDestroy() {
+        super.onDestroy();
+        if(mReceiver != null){
+            getActivity().unregisterReceiver(mReceiver);
+            mReceiver = null;
         }
     }
+
+
+    //    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if(requestCode == EMConstants.REQCODE_START_CHAT){
+//            Log.d(TAG,"onActivityResult");
+//            curChatingBean = null;
+//        }
+//    }
 
 
     @Override

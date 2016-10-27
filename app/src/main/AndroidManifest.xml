@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.qg.kinectdoctor">
+          package="com.qg.kinectdoctor">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -47,7 +47,6 @@
         </activity>
         <activity android:name=".activity.ChatActivity"
             android:label="@string/app_name">
-
         </activity>
 
         <!-- 设置环信应用的AppKey -->
@@ -70,6 +69,14 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".personal.login.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity android:name=".personal.starter.StarterActivity">
+        </activity>
     </application>
 
 </manifest>

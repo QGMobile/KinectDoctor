@@ -90,7 +90,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
                 case EMConstants.VIEWTYPE_SOMEONE:
 
                     EMVoiceMessageBody pBody = bean.getVoice();
-                    pLengthTv.setText(""+((int)pBody.getLength()/1000)+"''");
+                    int pLen = pBody.getLength()/1000;
+                    String dTimeLen = ""+((int)pBody.getLength()/1000);
+                    pLengthTv.setText(""+dTimeLen+"''");
+                    StringBuilder pSb = new StringBuilder();
+                    for(int i=0; i<pLen;i++){
+                        pSb.append(" ");
+                    }
+                    doctorBtn.setText(pSb.toString());
                     patientBtn.setTag(bean);
                     patientBtn.setOnClickListener(this);
                     if(bean.isPlaying()){
@@ -106,7 +113,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
                     break;
                 case EMConstants.VIEWTYPE_ME:
                     EMVoiceMessageBody dBody = bean.getVoice();
-                    dLengthTv.setText("" + ((int)dBody.getLength()/1000)+"''");
+                    int dLen = dBody.getLength()/1000;
+                    String pTimeLen = ""+((int)dBody.getLength()/1000);
+                    dLengthTv.setText("" + pTimeLen +"''");
+                    StringBuilder dSb = new StringBuilder();
+                    for(int i=0; i<dLen;i++){
+                        dSb.append(" ");
+                    }
+                    doctorBtn.setText(dSb.toString());
                     doctorBtn.setTag(bean);
                     doctorBtn.setOnClickListener(this);
                     if(bean.isPlaying()){
