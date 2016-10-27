@@ -16,10 +16,11 @@ public class VoiceBean {
 //    private String time;
     private int type;
     private EMMessage message;
-
+    private boolean isPlaying;
 
     private VoiceBean(int type){
         this.type = type;
+        isPlaying = false;
     }
 
     public VoiceBean(int type, EMMessage message){
@@ -71,6 +72,14 @@ public class VoiceBean {
 
     public int getType() {
         return type;
+    }
+
+    public boolean isPlaying(){
+        return isPlaying;
+    }
+
+    public void setIsPlaying(boolean isPlaying){
+        this.isPlaying = isPlaying;
     }
 
 //    public void setType(int type) {
