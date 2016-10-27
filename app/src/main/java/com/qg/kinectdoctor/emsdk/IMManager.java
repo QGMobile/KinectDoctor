@@ -1,6 +1,8 @@
 package com.qg.kinectdoctor.emsdk;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.hyphenate.EMCallBack;
@@ -105,10 +107,58 @@ public class IMManager {
         EMClient.getInstance().logout(false);
     }
 
-    public void sendVoiceMessage(String filePath, int length, String toChatUsername, EMCallBack callBack){
-        EMMessage message = EMMessage.createVoiceSendMessage(filePath, length, toChatUsername);
+    public void sendVoiceMessage(String filePath, int length, String toChatUsername, final Handler handler, final MediaRecordWorker.MediaRecordListener listener){
+        final EMMessage message = EMMessage.createVoiceSendMessage(filePath, length, toChatUsername);
         message.setChatType(EMMessage.ChatType.Chat);
-        message.setMessageStatusCallback(callBack);
+//        message.setMessageStatusCallback(callBack);
+        message.setMessageStatusCallback(new EMCallBack() {
+            @Override
+            public void onSuccess() {
+                checkIsInMainThread(handler);
+                if(listener == null) return;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onSuccess(message);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final int code,final String errMsg) {
+                checkIsInMainThread(handler);
+                if(listener == null)return;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onError(code, errMsg);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onProgress(final int progress,final String status) {
+                checkIsInMainThread(handler);
+                if(listener == null) return;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onProgressing(progress, status);
+                    }
+                });
+            }
+
+            private void checkIsInMainThread(Handler handler){
+                if(handler == null) {
+                    throw new NullPointerException("handler is null");
+                }
+                Looper looper = handler.getLooper();
+                if(looper != Looper.getMainLooper()){
+                    throw new RuntimeException("you should a handler associated with the main thread");
+                }
+            }
+        });
         EMClient.getInstance().chatManager().sendMessage(message);
     }
 

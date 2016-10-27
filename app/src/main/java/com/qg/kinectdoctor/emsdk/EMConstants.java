@@ -13,6 +13,9 @@ public class EMConstants {
 
     public static final int REQCODE_START_CHAT = 1;
 
+    public static final String ACTION_CHAT_ACTIVITY_FINISH = "chatActivityFinish";
+
+
     public static final String EXTRA_FROM_CHAT_CONTACT_LIST = "fromChatContactList";
     public static final String KEY_CHATINFO_BEAN = "chatInfoBean";
 

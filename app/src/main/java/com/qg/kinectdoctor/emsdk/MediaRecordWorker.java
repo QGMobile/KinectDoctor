@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMVoiceMessageBody;
 import com.qg.kinectdoctor.activity.App;
 
@@ -18,7 +19,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Created by ZH_L on 2016/10/25.
  */
-public class MediaRecordWorker extends BaseWorker<RecordTask> implements EMCallBack{
+public class MediaRecordWorker extends BaseWorker<RecordTask> {
     private static final String TAG  = MediaRecordWorker.class.getSimpleName();
 //    private Handler handler;
 //    private BlockingQueue<RecordTask> mrQueue;
@@ -35,9 +36,11 @@ public class MediaRecordWorker extends BaseWorker<RecordTask> implements EMCallB
 //   private Object mLock = new Object();
 
     private boolean isCancel = false;
+    private Looper looper;
 
     @Override
     public void run() {
+        looper = Looper.myLooper();
         while(!isCancel){
             try {
                 final RecordTask task = mQueue.take();
@@ -45,7 +48,7 @@ public class MediaRecordWorker extends BaseWorker<RecordTask> implements EMCallB
                 int length = task.getLength();
                 String toWho = task.getImUsername();
                 Log.e(TAG, "filePath->"+filePath+", length->"+length+", toWho->"+toWho);
-                IMManager.getInstance(App.getInstance()).sendVoiceMessage(filePath, length, toWho, this);
+                IMManager.getInstance(App.getInstance()).sendVoiceMessage(filePath, length, toWho, handler,mrListener);
                 
 //                synchronized (mLock) {
 //                    curTask = task;
@@ -105,41 +108,42 @@ public class MediaRecordWorker extends BaseWorker<RecordTask> implements EMCallB
     }
 
     //EMCallBack
-    @Override
-    public void onSuccess() {
-        if(handler != null &&mrListener != null){
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mrListener.onSuccess();
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onError(final int code, final String message) {
-        if(handler != null &&mrListener != null){
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mrListener.onError(code, message);
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onProgress(final int progress,final String status) {
-        if(handler != null &&mrListener != null){
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mrListener.onProgressing(progress, status);
-                }
-            });
-        }
-    }
+//    @Override
+//    public void onSuccess() {
+//        Log.e(TAG,"is in the same thread->"+(Looper.myLooper() == looper));
+//        if(handler != null &&mrListener != null){
+//            handler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mrListener.onSuccess();
+//                }
+//            });
+//        }
+//    }
+//
+//    @Override
+//    public void onError(final int code, final String message) {
+//        if(handler != null &&mrListener != null){
+//            handler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mrListener.onError(code, message);
+//                }
+//            });
+//        }
+//    }
+//
+//    @Override
+//    public void onProgress(final int progress,final String status) {
+//        if(handler != null &&mrListener != null){
+//            handler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mrListener.onProgressing(progress, status);
+//                }
+//            });
+//        }
+//    }
 
 //    @Override
 //    public void onError(MediaRecorder mediaRecorder, int what, int extra) {
@@ -191,7 +195,7 @@ public class MediaRecordWorker extends BaseWorker<RecordTask> implements EMCallB
 
 
     public interface MediaRecordListener{
-        void onSuccess();
+        void onSuccess(EMMessage message);
         void onError(int code, String message);
         void onProgressing(int progress, String status);
     }
