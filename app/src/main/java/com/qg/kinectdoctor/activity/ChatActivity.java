@@ -23,6 +23,7 @@ import com.qg.kinectdoctor.emsdk.EMConstants;
 import com.qg.kinectdoctor.emsdk.IMFilter;
 import com.qg.kinectdoctor.emsdk.IMManager;
 import com.qg.kinectdoctor.emsdk.MediaExectutor;
+import com.qg.kinectdoctor.emsdk.MediaPlayWorker;
 import com.qg.kinectdoctor.emsdk.PlayTask;
 import com.qg.kinectdoctor.emsdk.RecordTask;
 import com.qg.kinectdoctor.model.ChatInfoBean;
@@ -39,7 +40,7 @@ import java.util.List;
 /**
  * Created by ZH_L on 2016/10/22.
  */
-public class ChatActivity extends BaseActivity implements EMMessageListener, ChatAdapter.OnItemVoiceClickListener, View.OnLongClickListener, View.OnTouchListener, RecorderStateMachine.RecorderStateMachineListener{
+public class ChatActivity extends BaseActivity implements EMMessageListener, ChatAdapter.OnItemVoiceClickListener, View.OnLongClickListener, View.OnTouchListener, RecorderStateMachine.RecorderStateMachineListener, MediaPlayWorker.PlayStatusChangedListener{
     private static final String TAG = ChatActivity.class.getSimpleName();
 
     public static void startForResult(Activity activity, int requestCode){
@@ -74,6 +75,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
 
         rsMachine = new RecorderStateMachine();
         rsMachine.setRecorderStateMachineListener(this);
+        MediaExectutor.getInstance().setPlayStatusChangedListener(this);
     }
 
     private void initUI(){
@@ -124,9 +126,13 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     private void initEM(){
         String username = curChatingBean.getIMUsername();
         List<EMMessage> history = IMManager.getInstance(this).getChatHistory(username);
+        Log.e(TAG, "history-size->"+history.size());
         List<VoiceBean> beans = IMFilter.devideByTimeTitle(history, username);
+        Log.e(TAG, "bean-size->"+beans.size());
         mList.addAll(beans);
         mAdapter.notifyDataSetChanged();
+
+        IMManager.getInstance(this).addMessageListener(this);
     }
 
 
@@ -137,10 +143,17 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     @Override
     public void onMessageReceived(List<EMMessage> list) {
         if(list == null) return;
+        String chating = curChatingBean.getIMUsername();
+        List<EMMessage> chatingMsgs = new ArrayList<>();
         for(EMMessage message: list){
-            EMVoiceMessageBody voice = (EMVoiceMessageBody) message.getBody();
-            
+            String imUsername = message.getFrom();
+            if(chating.equals(imUsername)){
+                chatingMsgs.add(message);
+            }
         }
+        List<VoiceBean> newBeans = IMFilter.devideByTimeTitle(chatingMsgs, chating);
+        mList.addAll(newBeans);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -215,11 +228,10 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
                     //end to record
                     rsMachine.stopRecorder(false);
                     showMessage("停止录音");
-                    return true;
                 }
                 return false;
             case MotionEvent.ACTION_MOVE:
-                isLongClick = false;
+//                isLongClick = false;
 
                 return true;
             case MotionEvent.ACTION_CANCEL:
@@ -227,13 +239,15 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
                 //end to record and delete the recording file
                 rsMachine.stopRecorder(true);
 
-                return true;
+                return false;
         }
         return false;
     }
 
     @Override
     public void onStop(File recordingFile, boolean cancelRecord) {
+        isLongClick = false;
+        mRecordBtn.setLongClickable(true);
         if(cancelRecord && recordingFile != null) {
             //delete the recording file
             recordingFile.delete();
@@ -245,6 +259,20 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
             String imUsername = curChatingBean.getIMUsername();
             RecordTask task = new RecordTask(filePath, (int)length, imUsername);
             MediaExectutor.getInstance().executeRecordTask(task);
+        }
+    }
+
+    @Override
+    public void onPlayStatusChanged(MediaPlayWorker.PlayStatus nowStatus) {
+        switch(nowStatus){
+            case SUCCESS:
+                break;
+            case PROGRESS:
+                break;
+            case FAIL:
+                showMessage(nowStatus.getErrMsg());
+
+                break;
         }
     }
 }

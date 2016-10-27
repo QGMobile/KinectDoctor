@@ -33,25 +33,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
 
     @Override
     public ChatAdapter.VoiceHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        int layoutId = getLayoutId(viewType);
+        int layoutId = getLayoutId();
         if(layoutId == 0) return null;
         final View v = LayoutInflater.from(context).inflate(layoutId, null);
         return new VoiceHolder(v);
     }
 
-    private int getLayoutId(int viewType){
-        int layoutId = 0;
-        switch(viewType){
-            case EMConstants.VIEWTYPE_TIME:
-                layoutId = R.layout.item_chat_time;
-                break;
-            case EMConstants.VIEWTYPE_SOMEONE:
-                layoutId = R.layout.item_chat_patient;
-                break;
-            case EMConstants.VIEWTYPE_ME:
-                layoutId = R.layout.item_chat_doctor;
-                break;
-        }
+    private int getLayoutId(){
+        int layoutId = R.layout.chat_row_layout;
+//        switch(viewType){
+//            case EMConstants.VIEWTYPE_TIME:
+//                layoutId = R.layout.item_chat_time;
+//                break;
+//            case EMConstants.VIEWTYPE_SOMEONE:
+//                layoutId = R.layout.item_chat_patient;
+//                break;
+//            case EMConstants.VIEWTYPE_ME:
+//                layoutId = R.layout.item_chat_doctor;
+//                break;
+//        }
         return layoutId;
     }
 
@@ -74,6 +74,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
 
     public class VoiceHolder extends ItemViewHolder<VoiceBean>{
 
+        private View itemTime, itemPatient, itemDoctor;
         private TextView timeTv;    //type time
 
         //type patient
@@ -90,40 +91,44 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
 
         @Override
         public void bindElement(VoiceBean bean) {
-            switch(getItemViewType()){
+            switch(bean.getType()){
                 case EMConstants.VIEWTYPE_TIME:
                     timeTv.setText(bean.getTime());
+                    itemTime.setVisibility(View.VISIBLE);
+                    itemDoctor.setVisibility(View.GONE);
+                    itemPatient.setVisibility(View.GONE);
                     break;
                 case EMConstants.VIEWTYPE_SOMEONE:
                     EMVoiceMessageBody pBody = bean.getVoice();
-                    pLengthTv.setText(pBody.getLength());
+                    pLengthTv.setText(""+pBody.getLength()+"''");
                     patientBtn.setTag(pBody);
                     patientBtn.setOnClickListener(this);
+                    itemTime.setVisibility(View.GONE);
+                    itemDoctor.setVisibility(View.GONE);
+                    itemPatient.setVisibility(View.VISIBLE);
                     break;
                 case EMConstants.VIEWTYPE_ME:
                     EMVoiceMessageBody dBody = bean.getVoice();
-                    dLengthTv.setText(dBody.getLength());
+                    dLengthTv.setText("" + dBody.getLength()+"''");
                     doctorBtn.setTag(dBody);
                     doctorBtn.setOnClickListener(this);
+                    itemTime.setVisibility(View.GONE);
+                    itemDoctor.setVisibility(View.VISIBLE);
+                    itemPatient.setVisibility(View.GONE);
                     break;
             }
         }
 
         @Override
         public void initChilds(View itemView) {
-            switch(getItemViewType()){
-                case EMConstants.VIEWTYPE_TIME:
-                    timeTv = (TextView)itemView.findViewById(R.id.time_tv);
-                    break;
-                case EMConstants.VIEWTYPE_SOMEONE:
-                    patientBtn = (Button)itemView.findViewById(R.id.patient_voice_btn);
-                    pLengthTv = (TextView)itemView.findViewById(R.id.time_length_tv);
-                    break;
-                case EMConstants.VIEWTYPE_ME:
-                    doctorBtn = (Button)itemView.findViewById(R.id.doctor_voice_btn);
-                    dLengthTv = (TextView)itemView.findViewById(R.id.time_length_tv);
-                    break;
-            }
+           itemTime = itemView.findViewById(R.id.item_chat_time);
+            itemDoctor = itemView.findViewById(R.id.item_chat_doctor);
+            itemPatient = itemView.findViewById(R.id.item_chat_patient);
+            timeTv = (TextView) itemView.findViewById(R.id.time_tv);
+            pLengthTv = (TextView)itemView.findViewById(R.id.p_time_length_tv);
+            patientBtn = (Button) itemView.findViewById(R.id.patient_voice_btn);
+            dLengthTv = (TextView)itemView.findViewById(R.id.d_time_length_tv);
+            doctorBtn = (Button) itemView.findViewById(R.id.doctor_voice_btn);
         }
 
         @Override
@@ -132,6 +137,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
             switch(view.getId()){
                 case R.id.patient_voice_btn:
                     body  = (EMVoiceMessageBody) patientBtn.getTag();
+                    break;
                 case R.id.doctor_voice_btn:
                     body = (EMVoiceMessageBody) doctorBtn.getTag();
                     break;

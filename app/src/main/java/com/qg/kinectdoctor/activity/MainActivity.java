@@ -2,13 +2,17 @@ package com.qg.kinectdoctor.activity;
 
 
 import android.content.Context;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qg.kinectdoctor.R;
+import com.qg.kinectdoctor.emsdk.IMManager;
+import com.qg.kinectdoctor.emsdk.LoginCallback;
 import com.qg.kinectdoctor.fragment.ChatListFragment;
 import com.qg.kinectdoctor.logic.LogicHandler;
 import com.qg.kinectdoctor.logic.LogicImpl;
@@ -24,7 +28,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+//        loginEM();
     }
 
     public static void test(final Context context, final TextView tv){
@@ -43,4 +47,24 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
+
+//    public void loginEM(){
+//        String phone = "12345678901";
+//        IMManager.getInstance(this).login(phone, new LoginCallback() {
+//            @Override
+//            public void onSuccess() {
+//                Log.e("loginEM", "onSuccess");
+//                FragmentManager manager = getSupportFragmentManager();
+//                FragmentTransaction transaction = manager.beginTransaction();
+//                ChatListFragment chatListFragment = new ChatListFragment();
+//                transaction.replace(android.R.id.content, chatListFragment);
+//                transaction.commit();
+//            }
+//
+//            @Override
+//            public void onError(String errorMsg) {
+//
+//            }
+//        });
+//    }
 }

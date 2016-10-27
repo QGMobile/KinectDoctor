@@ -20,6 +20,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/chat_topbar"
-        android:layout_above="@+id/record_btn">
+        android:layout_above="@+id/chat_record_btn">
     </android.support.v7.widget.RecyclerView>
 </RelativeLayout>
