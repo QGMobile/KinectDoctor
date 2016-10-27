@@ -26,6 +26,7 @@ import com.qg.kinectdoctor.model.ChatInfoBean;
 import com.qg.kinectdoctor.model.PUser;
 import com.qg.kinectdoctor.param.GetPUserByPhoneParam;
 import com.qg.kinectdoctor.result.GetPUserByPhoneResult;
+import com.qg.kinectdoctor.util.CommandUtil;
 import com.qg.kinectdoctor.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -151,7 +152,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
     public void onMessageReceived(List<EMMessage> list) {
         Log.e(TAG, "onMessageReceived");
         if(list == null)return;
-
+        CommandUtil.vibrate(1000);
         //显示所有联系人的消息收到状态
         mAdapter.notifyDataSetChanged();
 

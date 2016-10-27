@@ -28,6 +28,7 @@ import com.qg.kinectdoctor.emsdk.PlayTask;
 import com.qg.kinectdoctor.emsdk.RecordTask;
 import com.qg.kinectdoctor.model.ChatInfoBean;
 import com.qg.kinectdoctor.model.VoiceBean;
+import com.qg.kinectdoctor.util.CommandUtil;
 import com.qg.kinectdoctor.util.RecorderStateMachine;
 import com.qg.kinectdoctor.util.ToastUtil;
 import com.qg.kinectdoctor.view.TopbarL;
@@ -150,6 +151,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
             if(chating.equals(imUsername)){
                 chatingMsgs.add(message);
             }
+        }
+        if(!chatingMsgs.isEmpty()){
+            CommandUtil.vibrate(1000);
         }
         List<VoiceBean> newBeans = IMFilter.devideByTimeTitle(chatingMsgs, chating);
         mList.addAll(newBeans);
