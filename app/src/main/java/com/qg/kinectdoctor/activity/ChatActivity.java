@@ -115,7 +115,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        IMManager.getInstance(this).removeMessageListener(this);
         setResult(EMConstants.REQCODE_START_CHAT);
     }
 
@@ -127,7 +126,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         Log.e(TAG, "bean-size->"+beans.size());
         mList.addAll(beans);
         mAdapter.notifyDataSetChanged();
-
+        mRecyclerView.smoothScrollToPosition(mList.size()-1);
         IMManager.getInstance(this).addMessageListener(this);
     }
 
@@ -136,9 +135,16 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         return imUsername.replace(EMConstants.PATIENT_USERNAME_PREFIX,"").replace(EMConstants.DOCTOR_USERNAME_PREFIX, "");
     }
 
+    private Runnable r = new Runnable() {
+        @Override
+        public void run() {
+            mAdapter.notifyDataSetChanged();
+            mRecyclerView.smoothScrollToPosition(mList.size()-1);
+        }
+    };
+
     @Override
     public void onMessageReceived(List<EMMessage> list) {
-        Log.e(TAG, "onMessageReceived");
         if(list == null) return;
         String chating = curChatingBean.getIMUsername();
         List<EMMessage> chatingMsgs = new ArrayList<>();
@@ -153,8 +159,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         }
         List<VoiceBean> newBeans = IMFilter.devideByTimeTitle(chatingMsgs, chating);
         mList.addAll(newBeans);
-        mRecyclerView.smoothScrollToPosition(mList.size()-1);
-        mAdapter.notifyDataSetChanged();
+        runOnUiThread(r);
     }
 
     @Override
