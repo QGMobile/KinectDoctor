@@ -28,43 +28,5 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        loginEM();
     }
-
-    public static void test(final Context context, final TextView tv){
-        LoginParam param = new LoginParam("15521265445","qgmobile");
-        LogicImpl.getInstance().login(param, new LogicHandler<LoginResult>() {
-            @Override
-            public void onResult(LoginResult result, boolean onUIThread) {
-                if(onUIThread){
-                    if(result.isOk()){
-                        ToastUtil.showToast(context, "访问网络成功");
-                        tv.setText(result.errMsg);
-                    }else{
-                        ToastUtil.showToast(context, result.errMsg);
-                    }
-                }
-            }
-        });
-    }
-
-//    public void loginEM(){
-//        String phone = "12345678901";
-//        IMManager.getInstance(this).login(phone, new LoginCallback() {
-//            @Override
-//            public void onSuccess() {
-//                Log.e("loginEM", "onSuccess");
-//                FragmentManager manager = getSupportFragmentManager();
-//                FragmentTransaction transaction = manager.beginTransaction();
-//                ChatListFragment chatListFragment = new ChatListFragment();
-//                transaction.replace(android.R.id.content, chatListFragment);
-//                transaction.commit();
-//            }
-//
-//            @Override
-//            public void onError(String errorMsg) {
-//
-//            }
-//        });
-//    }
 }
