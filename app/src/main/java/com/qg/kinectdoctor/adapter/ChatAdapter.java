@@ -95,7 +95,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
                     pLengthTv.setText(""+dTimeLen+"''");
                     StringBuilder pSb = new StringBuilder();
                     for(int i=0; i<pLen;i++){
-                        pSb.append(" ");
+                        pSb.append("  ");
                     }
                     doctorBtn.setText(pSb.toString());
                     patientBtn.setTag(bean);
@@ -118,7 +118,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
                     dLengthTv.setText("" + pTimeLen +"''");
                     StringBuilder dSb = new StringBuilder();
                     for(int i=0; i<dLen;i++){
-                        dSb.append(" ");
+                        dSb.append("  ");
                     }
                     doctorBtn.setText(dSb.toString());
                     doctorBtn.setTag(bean);
