@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.hyphenate.chat.EMFileMessageBody;
 import com.hyphenate.chat.EMVoiceMessageBody;
+import com.qg.kinectdoctor.model.VoiceBean;
 
 import java.io.File;
 import java.util.HashMap;
@@ -37,12 +38,16 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements  SoundPool.
         sampleId = 0;
     }
 
+    private VoiceBean curVoiceBean = null;
+
     @Override
     public void run() {
         while(true) {
             try {
                 PlayTask task = mQueue.take();
-                EMVoiceMessageBody body = task.getEmVoiceMessageBody();
+                VoiceBean voiceBean = task.getVoiceBean();
+                curVoiceBean = voiceBean;
+                EMVoiceMessageBody body = voiceBean.getVoice();
                 EMFileMessageBody.EMDownloadStatus s = body.downloadStatus();
 
                 if(s == EMFileMessageBody.EMDownloadStatus.PENDING){
@@ -51,11 +56,12 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements  SoundPool.
                     Log.e(TAG,"voice-downloading");
                 }else if(s == EMFileMessageBody.EMDownloadStatus.SUCCESSED){
                     Log.e(TAG,"voice-download-success");
-                    callToMainThread(PlayStatus.PROGRESS);
+                    callToMainThread(PlayStatus.PROGRESS.setVoiceBean(curVoiceBean));
                     loadVoice(body);
                 }else if(s == EMFileMessageBody.EMDownloadStatus.FAILED){
                     Log.e(TAG,"voice-download-fail");
-                    callToMainThread(PlayStatus.FAIL.setErrMsg("voice-download-fail"));
+                    callToMainThread(PlayStatus.FAIL.setErrMsg("voice-download-fail").setVoiceBean(curVoiceBean));
+                    curVoiceBean = null;
                 }
 
             } catch (InterruptedException e) {
@@ -78,7 +84,8 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements  SoundPool.
             }
         }
 
-        callToMainThread(PlayStatus.FAIL.setErrMsg("load voice fail"));
+        callToMainThread(PlayStatus.FAIL.setErrMsg("load voice fail").setVoiceBean(curVoiceBean));
+        curVoiceBean = null;
     }
 
     public void callToMainThread(final PlayStatus status){
@@ -106,6 +113,16 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements  SoundPool.
         PlayStatus(){};
 
         private String errMsg = "";
+        private VoiceBean voiceBean;
+
+        public VoiceBean getVoiceBean() {
+            return voiceBean;
+        }
+
+        public PlayStatus setVoiceBean(VoiceBean voiceBean) {
+            this.voiceBean = voiceBean;
+            return this;
+        }
 
         public String getErrMsg(){
             return errMsg;
@@ -135,7 +152,8 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements  SoundPool.
             int soundId = soundMap.get(sampleId);
             soundPool.play(soundId, 1.0f, 1.0f, 0, 0, 1.0f);
 
-            callToMainThread(PlayStatus.SUCCESS);
+            callToMainThread(PlayStatus.SUCCESS.setVoiceBean(curVoiceBean));
+            curVoiceBean = null;
         }
 
     }

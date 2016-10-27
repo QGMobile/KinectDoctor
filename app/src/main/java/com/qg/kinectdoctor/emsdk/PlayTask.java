@@ -1,23 +1,24 @@
 package com.qg.kinectdoctor.emsdk;
 
 import com.hyphenate.chat.EMVoiceMessageBody;
+import com.qg.kinectdoctor.model.VoiceBean;
 
 /**
  * Created by ZH_L on 2016/10/25.
  */
 public class PlayTask {
 
-    private EMVoiceMessageBody emVoiceMessageBody;
+    private VoiceBean voiceBean;
 
-    public PlayTask(EMVoiceMessageBody emVoiceMessageBody){
-        this.emVoiceMessageBody = emVoiceMessageBody;
+    public PlayTask(VoiceBean voiceBean){
+        this.voiceBean = voiceBean;
     }
 
-    public EMVoiceMessageBody getEmVoiceMessageBody() {
-        return emVoiceMessageBody;
+    public VoiceBean getVoiceBean() {
+        return voiceBean;
     }
 
-    public void setEmVoiceMessageBody(EMVoiceMessageBody emVoiceMessageBody) {
-        this.emVoiceMessageBody = emVoiceMessageBody;
+    public void setVoiceBean(VoiceBean voiceBean) {
+        this.voiceBean = voiceBean;
     }
 }

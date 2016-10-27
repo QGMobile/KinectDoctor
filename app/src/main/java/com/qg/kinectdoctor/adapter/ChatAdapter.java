@@ -41,17 +41,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
 
     private int getLayoutId(){
         int layoutId = R.layout.chat_row_layout;
-//        switch(viewType){
-//            case EMConstants.VIEWTYPE_TIME:
-//                layoutId = R.layout.item_chat_time;
-//                break;
-//            case EMConstants.VIEWTYPE_SOMEONE:
-//                layoutId = R.layout.item_chat_patient;
-//                break;
-//            case EMConstants.VIEWTYPE_ME:
-//                layoutId = R.layout.item_chat_doctor;
-//                break;
-//        }
         return layoutId;
     }
 
@@ -99,19 +88,34 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
                     itemPatient.setVisibility(View.GONE);
                     break;
                 case EMConstants.VIEWTYPE_SOMEONE:
-                    EMVoiceMessageBody pBody = bean.getVoice();
-                    pLengthTv.setText(""+pBody.getLength()+"''");
-                    patientBtn.setTag(pBody);
+
+//                    EMVoiceMessageBody pBody = bean.getVoice();
+//                    pLengthTv.setText(""+pBody.getLength()+"''");
+                    patientBtn.setTag(bean);
                     patientBtn.setOnClickListener(this);
+                    if(bean.isPlaying()){
+                        patientBtn.setClickable(false);
+                        patientBtn.setBackgroundResource(R.drawable.patient_voice_click);
+                    }else{
+                        patientBtn.setBackgroundResource(R.drawable.patient_voice_normal);
+                        patientBtn.setClickable(true);
+                    }
                     itemTime.setVisibility(View.GONE);
                     itemDoctor.setVisibility(View.GONE);
                     itemPatient.setVisibility(View.VISIBLE);
                     break;
                 case EMConstants.VIEWTYPE_ME:
-                    EMVoiceMessageBody dBody = bean.getVoice();
-                    dLengthTv.setText("" + dBody.getLength()+"''");
-                    doctorBtn.setTag(dBody);
+//                    EMVoiceMessageBody dBody = bean.getVoice();
+//                    dLengthTv.setText("" + dBody.getLength()+"''");
+                    doctorBtn.setTag(bean);
                     doctorBtn.setOnClickListener(this);
+                    if(bean.isPlaying()){
+                        doctorBtn.setClickable(false);
+                        doctorBtn.setBackgroundResource(R.drawable.doctor_voice_click);
+                    }else{
+                        doctorBtn.setBackgroundResource(R.drawable.doctor_voice_normal);
+                        doctorBtn.setClickable(true);
+                    }
                     itemTime.setVisibility(View.GONE);
                     itemDoctor.setVisibility(View.VISIBLE);
                     itemPatient.setVisibility(View.GONE);
@@ -133,17 +137,21 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
 
         @Override
         public void onClick(View view) {
-            EMVoiceMessageBody body = null;
+            VoiceBean bean = null;
             switch(view.getId()){
                 case R.id.patient_voice_btn:
-                    body  = (EMVoiceMessageBody) patientBtn.getTag();
+                    patientBtn.setClickable(false);
+                    patientBtn.setBackgroundResource(R.drawable.patient_voice_click);
+                    bean  = (VoiceBean) patientBtn.getTag();
                     break;
                 case R.id.doctor_voice_btn:
-                    body = (EMVoiceMessageBody) doctorBtn.getTag();
+                    doctorBtn.setClickable(false);
+                    doctorBtn.setBackgroundResource(R.drawable.doctor_voice_click);
+                    bean = (VoiceBean) doctorBtn.getTag();
                     break;
             }
-            if(body != null && mListener != null){
-                mListener.onVoiceClick(body, getPosition());
+            if(bean != null && mListener != null){
+                mListener.onVoiceClick(bean, getPosition());
             }
         }
     }
@@ -154,6 +162,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
     }
 
     public interface OnItemVoiceClickListener{
-        void onVoiceClick(EMVoiceMessageBody body, int position);
+        void onVoiceClick(VoiceBean voiceBean, int position);
     }
 }
