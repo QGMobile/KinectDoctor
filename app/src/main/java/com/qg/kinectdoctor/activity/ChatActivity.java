@@ -126,7 +126,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         Log.e(TAG, "bean-size->"+beans.size());
         mList.addAll(beans);
         mAdapter.notifyDataSetChanged();
-
+        mRecyclerView.smoothScrollToPosition(mList.size()-1);
         IMManager.getInstance(this).addMessageListener(this);
     }
 
@@ -134,6 +134,14 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     private String filterToPhone(String imUsername){
         return imUsername.replace(EMConstants.PATIENT_USERNAME_PREFIX,"").replace(EMConstants.DOCTOR_USERNAME_PREFIX, "");
     }
+
+    private Runnable r = new Runnable() {
+        @Override
+        public void run() {
+            mAdapter.notifyDataSetChanged();
+            mRecyclerView.smoothScrollToPosition(mList.size()-1);
+        }
+    };
 
     @Override
     public void onMessageReceived(List<EMMessage> list) {
@@ -151,7 +159,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         }
         List<VoiceBean> newBeans = IMFilter.devideByTimeTitle(chatingMsgs, chating);
         mList.addAll(newBeans);
-        mAdapter.notifyDataSetChanged();
+        runOnUiThread(r);
     }
 
     @Override

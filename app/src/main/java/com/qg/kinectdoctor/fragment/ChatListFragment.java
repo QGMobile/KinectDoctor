@@ -34,6 +34,7 @@ import com.qg.kinectdoctor.util.ToastUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.RunnableFuture;
 
 /**
  * Created by ZH_L on 2016/10/21.
@@ -70,7 +71,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
     }
 
     private void loginEM(){
-        String phone = "12345678901";
+        String phone = "13549991585";
         IMManager.getInstance(getActivity()).login(phone, new LoginCallback() {
             @Override
             public void onSuccess() {
@@ -117,7 +118,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
                                             ToastUtil.showResultErrorToast(result);
                                         }
 //
-                                        PUser pUser = new PUser(18, "测试", 1, "13549991585", "", "1995-05-16");
+                                        PUser pUser = new PUser(18, "测试", 1, "12345678901", "", "1995-05-16");
                                         ChatInfoBean cb = new ChatInfoBean(pUser);
                                         mList.add(cb);
                                         mAdapter.notifyDataSetChanged();
@@ -166,19 +167,27 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
         ChatActivity.startForResult(getActivity(),extra,EMConstants.REQCODE_START_CHAT);
     }
 
+    private Runnable r = new Runnable(){
+
+        @Override
+        public void run() {
+            //显示所有联系人的消息收到状态
+            mAdapter.notifyDataSetChanged();
+
+            //把正在聊天的人的未读消息清零
+            if(curChatingBean != null){
+                mAdapter.clearUnReadCount(curChatingBean);
+            }
+        }
+    };
+
     @Override
     public void onMessageReceived(List<EMMessage> list) {
         Log.e(TAG, "in main thread->"+(Looper.myLooper() == Looper.getMainLooper()));
         Log.e(TAG, "onMessageReceived");
         if(list == null)return;
         CommandUtil.vibrate(1000);
-        //显示所有联系人的消息收到状态
-        mAdapter.notifyDataSetChanged();
-
-        //把正在聊天的人的未读消息清零
-        if(curChatingBean != null){
-            mAdapter.clearUnReadCount(curChatingBean);
-        }
+        getActivity().runOnUiThread(r);
     }
 
     @Override

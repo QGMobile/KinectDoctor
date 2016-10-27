@@ -9,7 +9,7 @@ public class EMConstants {
 
     public static final String DOCTOR_USERNAME_PREFIX = "d";
 
-    public static final String PATIENT_USERNAME_PREFIX = "p";
+    public static final String PATIENT_USERNAME_PREFIX = "d";
 
     public static final int REQCODE_START_CHAT = 1;
 
