@@ -20,6 +20,7 @@ import com.qg.kinectdoctor.adapter.ChatContactListAdapter;
 import com.qg.kinectdoctor.emsdk.EMConstants;
 import com.qg.kinectdoctor.emsdk.IMFilter;
 import com.qg.kinectdoctor.emsdk.IMManager;
+import com.qg.kinectdoctor.emsdk.LoginCallback;
 import com.qg.kinectdoctor.logic.LogicHandler;
 import com.qg.kinectdoctor.logic.LogicImpl;
 import com.qg.kinectdoctor.model.ChatInfoBean;
@@ -52,10 +53,26 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
             mRecyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
             initRecyclerView();
             initEM();
-            getDataFromServer();
-
+//            getDataFromServer();
+            login();
         }
         return v;
+    }
+
+    private void login(){
+        String phone = "12345678901";
+        IMManager.getInstance(getActivity()).login(phone, new LoginCallback() {
+            @Override
+            public void onSuccess() {
+                Log.e(TAG, "login onSuccess");
+                getDataFromServer();
+            }
+
+            @Override
+            public void onError(String errorMsg) {
+
+            }
+        });
     }
 
     private void initRecyclerView(){
@@ -99,10 +116,10 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
                                             ToastUtil.showResultErrorToast(result);
                                         }
 //
-//                                        PUser pUser = new PUser(18, "测试", 1, "13549991585", "", "1995-05-16");
-//                                        ChatInfoBean cb = new ChatInfoBean(pUser);
-//                                        mList.add(cb);
-//                                        mAdapter.notifyDataSetChanged();
+                                        PUser pUser = new PUser(18, "测试", 1, "12345678901", "", "1995-05-16");
+                                        ChatInfoBean cb = new ChatInfoBean(pUser);
+                                        mList.add(cb);
+                                        mAdapter.notifyDataSetChanged();
                                     }
                                 }
                             });
@@ -153,6 +170,9 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
         Log.e(TAG, "onMessageReceived");
         if(list == null)return;
         CommandUtil.vibrate(1000);
+        for(EMMessage message:list){
+            message.setUnread(true);
+        }
         //显示所有联系人的消息收到状态
         mAdapter.notifyDataSetChanged();
 

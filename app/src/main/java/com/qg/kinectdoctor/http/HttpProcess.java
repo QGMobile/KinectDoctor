@@ -48,8 +48,8 @@ public class HttpProcess {
         OutputStream os = null;
         try {
             String entrance = paramToEntrance(param);
-            Log.d(TAG,"url->"+(DefList.url + entrance));
-            URL url = new URL(DefList.url + entrance);
+            Log.d(TAG,"url->"+(DefList.url2 + entrance));
+            URL url = new URL(DefList.url2 + entrance);
             try {
                 HttpURLConnection conn = (HttpURLConnection)url.openConnection();
                 initConnection(conn);

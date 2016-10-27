@@ -34,9 +34,11 @@ public class MediaRecordWorker extends BaseWorker<RecordTask> implements EMCallB
 //    private RecordTask curTask = null;
 //   private Object mLock = new Object();
 
+    private boolean isCancel = false;
+
     @Override
     public void run() {
-        while(true){
+        while(!isCancel){
             try {
                 final RecordTask task = mQueue.take();
                 String filePath = task.getFilePath();
@@ -64,6 +66,10 @@ public class MediaRecordWorker extends BaseWorker<RecordTask> implements EMCallB
                 e.printStackTrace();
             }
         }
+    }
+
+    public void cancel(){
+        isCancel = true;
     }
 
 //    private void initRecorder(int audioSource, String path, int outputFormat, int outputEncode) throws IOException {
