@@ -58,7 +58,7 @@ public class ChatContactListAdapter extends ItemAdapter<ChatInfoBean, ChatContac
             nameTv.setText(pUser.getName());
             String username = bean.getIMUsername();
             int unReadCount = IMManager.getInstance(context).getUnreadMsgCount(username);
-            Log.e(TAG, "unReadCount");
+            Log.e(TAG, "unReadCount" + unReadCount);
             if(unReadCount <= 0 ){
                 unReadTv.setVisibility(View.GONE);
                 unReadTv.setText("");

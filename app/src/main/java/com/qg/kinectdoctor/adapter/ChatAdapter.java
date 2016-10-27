@@ -89,8 +89,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
                     break;
                 case EMConstants.VIEWTYPE_SOMEONE:
 
-//                    EMVoiceMessageBody pBody = bean.getVoice();
-//                    pLengthTv.setText(""+pBody.getLength()+"''");
+                    EMVoiceMessageBody pBody = bean.getVoice();
+                    pLengthTv.setText(""+((int)pBody.getLength()/1000)+"''");
                     patientBtn.setTag(bean);
                     patientBtn.setOnClickListener(this);
                     if(bean.isPlaying()){
@@ -105,8 +105,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VoiceHolder>{
                     itemPatient.setVisibility(View.VISIBLE);
                     break;
                 case EMConstants.VIEWTYPE_ME:
-//                    EMVoiceMessageBody dBody = bean.getVoice();
-//                    dLengthTv.setText("" + dBody.getLength()+"''");
+                    EMVoiceMessageBody dBody = bean.getVoice();
+                    dLengthTv.setText("" + ((int)dBody.getLength()/1000)+"''");
                     doctorBtn.setTag(bean);
                     doctorBtn.setOnClickListener(this);
                     if(bean.isPlaying()){

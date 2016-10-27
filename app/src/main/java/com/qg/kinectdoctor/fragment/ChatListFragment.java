@@ -176,6 +176,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
 
             //把正在聊天的人的未读消息清零
             if(curChatingBean != null){
+                Log.e(TAG, "clearUnReadCount");
                 mAdapter.clearUnReadCount(curChatingBean);
             }
         }
