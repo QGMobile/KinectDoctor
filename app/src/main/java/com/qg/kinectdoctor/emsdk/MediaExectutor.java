@@ -12,6 +12,8 @@ public class MediaExectutor {
     private MediaExectutor(){
         mpWorker = new MediaPlayWorker();
         mrWorker = new MediaRecordWorker();
+        mpWorker.start();
+        mrWorker.start();
     }
 
     private static MediaExectutor instance;
@@ -35,11 +37,10 @@ public class MediaExectutor {
         mrWorker.exectute(task);
     }
 
-    public MediaExectutor setMediaPlayerListener(MediaPlayWorker.MediaPlayListener listener){
+    public void setPlayStatusChangedListener(MediaPlayWorker.PlayStatusChangedListener listener){
         if(mpWorker != null){
-            mpWorker.setMediaPlayerListener(listener);
+            mpWorker.setPlayStatusChangedListener(listener);
         }
-        return this;
     }
 
     public MediaExectutor setMediaRecordListener(MediaRecordWorker.MediaRecordListener listener){

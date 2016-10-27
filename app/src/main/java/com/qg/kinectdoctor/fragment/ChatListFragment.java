@@ -26,6 +26,7 @@ import com.qg.kinectdoctor.model.ChatInfoBean;
 import com.qg.kinectdoctor.model.PUser;
 import com.qg.kinectdoctor.param.GetPUserByPhoneParam;
 import com.qg.kinectdoctor.result.GetPUserByPhoneResult;
+import com.qg.kinectdoctor.util.CommandUtil;
 import com.qg.kinectdoctor.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -66,38 +67,56 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
     }
 
     private void getDataFromServer(){
-        try {
-            List<String> usernames = IMManager.getInstance(getActivity()).getFriendsList();
-            final List<String> phones = IMFilter.filterToPhones(usernames);
-            GetPUserByPhoneParam param = new GetPUserByPhoneParam(phones);
-            LogicImpl.getInstance().getPUserByPhoneParam(param, new LogicHandler<GetPUserByPhoneResult>() {
-                @Override
-                public void onResult(GetPUserByPhoneResult result, boolean onUIThread) {
-                    if(onUIThread){
-                        if(result.isOk()){
-                            //get a Map<String, PUser>
-                            Map<String, PUser> phoneToPUser = result.getPhoneToPUser();
-                            if(phoneToPUser != null){
-                                Log.d("GetPUserByPhoneResult", phoneToPUser.toString());
-                            }
-                            for(String phone: phones) {
-                                PUser pUser = phoneToPUser.get(phone);
-                                if(pUser != null){
-                                    ChatInfoBean bean = new ChatInfoBean(pUser);
-                                    mList.add(bean);
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    final List<String> usernames = IMManager.getInstance(getActivity()).getFriendsList();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            final List<String> phones = IMFilter.filterToPhones(usernames);
+                            GetPUserByPhoneParam param = new GetPUserByPhoneParam(phones);
+                            LogicImpl.getInstance().getPUserByPhoneParam(param, new LogicHandler<GetPUserByPhoneResult>() {
+                                @Override
+                                public void onResult(GetPUserByPhoneResult result, boolean onUIThread) {
+                                    if(onUIThread){
+                                        if(result.isOk()){
+                                            //get a Map<String, PUser>
+                                            Map<String, PUser> phoneToPUser = result.getPhoneToPUser();
+                                            if(phoneToPUser != null){
+                                                Log.d("GetPUserByPhoneResult", phoneToPUser.toString());
+                                            }
+                                            for(String phone: phones) {
+                                                PUser pUser = phoneToPUser.get(phone);
+                                                if(pUser != null){
+                                                    ChatInfoBean bean = new ChatInfoBean(pUser);
+                                                    mList.add(bean);
+                                                }
+                                            }
+                                            mAdapter.notifyDataSetChanged();
+                                        }else{
+                                            ToastUtil.showResultErrorToast(result);
+                                        }
+//
+//                                        PUser pUser = new PUser(18, "测试", 1, "13549991585", "", "1995-05-16");
+//                                        ChatInfoBean cb = new ChatInfoBean(pUser);
+//                                        mList.add(cb);
+//                                        mAdapter.notifyDataSetChanged();
+                                    }
                                 }
-                            }
-                            mAdapter.notifyDataSetChanged();
-                        }else{
-                            ToastUtil.showResultErrorToast(result);
+                            });
                         }
-                    }
+                    });
+
+                } catch (HyphenateException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
                 }
-            });
-        } catch (HyphenateException e) {
-            e.printStackTrace();
-            Log.e(TAG, e.getMessage());
-        }
+            }
+        }.start();
+
+
     }
 
 
@@ -131,8 +150,9 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
 
     @Override
     public void onMessageReceived(List<EMMessage> list) {
+        Log.e(TAG, "onMessageReceived");
         if(list == null)return;
-
+        CommandUtil.vibrate(1000);
         //显示所有联系人的消息收到状态
         mAdapter.notifyDataSetChanged();
 

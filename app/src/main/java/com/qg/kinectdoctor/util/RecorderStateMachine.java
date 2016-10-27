@@ -33,18 +33,21 @@ public class RecorderStateMachine {
 
     public RecorderStateMachine(){
         mediaRecorder = new MediaRecorder();
+        initStatus();
+    }
+
+    private void initStatus(){
         isPrepared = false;
         isRecording = false;
         recordingFile = null;
+        recordStartTime = 0;
+        recordEndTime = 0;
     }
 
 //    private boolean isInit;
 
     public void initRecorder(){
-        isPrepared = false;
-        isRecording = false;
-        recordingFile = null;
-
+        initStatus();
         mediaRecorder.setAudioSource(DEFAULT_AUDIO_SOURCE);
         mediaRecorder.setOutputFormat(DEFAULT_OUTPUT_FORMAT);
         File dir = new File(DEFAUL_OUTPUT_FILE);
@@ -83,10 +86,14 @@ public class RecorderStateMachine {
         }
     }
 
+    private long recordStartTime;
+    private long recordEndTime;
+
 //    private boolean isStarted;
 
     public void startRecorder(){
         mediaRecorder.start();
+        recordStartTime = System.currentTimeMillis();
         Log.d(TAG, "recorder start");
         isRecording = true;
     }
@@ -95,9 +102,10 @@ public class RecorderStateMachine {
 
     public void stopRecorder(boolean cancelRecord){
         mediaRecorder.stop();
+        recordEndTime = System.currentTimeMillis();
         Log.d(TAG, "recorder stop");
         if(listener != null){
-            listener.onStop(recordingFile, cancelRecord);
+            listener.onStop(recordingFile, cancelRecord, recordEndTime - recordStartTime);
         }
         recordingFile = null;
         isRecording = false;
@@ -124,6 +132,6 @@ public class RecorderStateMachine {
     }
 
     public interface RecorderStateMachineListener{
-        void onStop(File recordingFile, boolean cancelRecord);
+        void onStop(File recordingFile, boolean cancelRecord, long recordDuration);
     }
 }

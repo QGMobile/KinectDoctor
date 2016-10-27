@@ -45,8 +45,8 @@ public class IMFilter {
         long time = calendar.getTimeInMillis();
 
         final List<EMMessage> msgs = messages;
-        int index = msgs.size();
-        for(int i=index; i>=0 ; i--){
+        int index = 0;
+        for(int i=index; i<msgs.size() ; i++){
             EMMessage msg = msgs.get(i);
 
             if(msg.getMsgTime() >= time){
@@ -75,8 +75,8 @@ public class IMFilter {
                 calendar.set(Calendar.DAY_OF_YEAR, --day);
                 time = calendar.getTimeInMillis();
 
-                //i++ for that make i when -- to the original index
-                i++;
+                //i-- for that make i when ++ to the original index
+                i--;
             }
         }
         return newMsgs;
