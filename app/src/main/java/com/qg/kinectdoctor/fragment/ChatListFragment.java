@@ -2,6 +2,7 @@ package com.qg.kinectdoctor.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,25 +55,10 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
             initRecyclerView();
             initEM();
 //            getDataFromServer();
-            login();
+
+            loginEM();
         }
         return v;
-    }
-
-    private void login(){
-        String phone = "12345678901";
-        IMManager.getInstance(getActivity()).login(phone, new LoginCallback() {
-            @Override
-            public void onSuccess() {
-                Log.e(TAG, "login onSuccess");
-                getDataFromServer();
-            }
-
-            @Override
-            public void onError(String errorMsg) {
-
-            }
-        });
     }
 
     private void initRecyclerView(){
@@ -81,6 +67,21 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
         mAdapter.setOnChatItemClickListener(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void loginEM(){
+        String phone = "12345678901";
+        IMManager.getInstance(getActivity()).login(phone, new LoginCallback() {
+            @Override
+            public void onSuccess() {
+                getDataFromServer();
+            }
+
+            @Override
+            public void onError(String errorMsg) {
+
+            }
+        });
     }
 
     private void getDataFromServer(){
@@ -116,7 +117,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
                                             ToastUtil.showResultErrorToast(result);
                                         }
 //
-                                        PUser pUser = new PUser(18, "测试", 1, "12345678901", "", "1995-05-16");
+                                        PUser pUser = new PUser(18, "测试", 1, "13549991585", "", "1995-05-16");
                                         ChatInfoBean cb = new ChatInfoBean(pUser);
                                         mList.add(cb);
                                         mAdapter.notifyDataSetChanged();
@@ -167,12 +168,10 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
 
     @Override
     public void onMessageReceived(List<EMMessage> list) {
+        Log.e(TAG, "in main thread->"+(Looper.myLooper() == Looper.getMainLooper()));
         Log.e(TAG, "onMessageReceived");
         if(list == null)return;
         CommandUtil.vibrate(1000);
-        for(EMMessage message:list){
-            message.setUnread(true);
-        }
         //显示所有联系人的消息收到状态
         mAdapter.notifyDataSetChanged();
 

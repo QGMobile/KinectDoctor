@@ -20,7 +20,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Created by ZH_L on 2016/10/25.
  */
-public class MediaPlayWorker extends BaseWorker<PlayTask> implements PlayerStateMachine.PlayerStateMachineListener{
+public class MediaPlayWorker extends BaseWorker<PlayTask> implements   PlayerStateMachine.PlayerStatusListener{
     private static final String TAG = MediaPlayWorker.class.getSimpleName();
 //    private Handler handler;
 //    private BlockingQueue<PlayTask> mpQueue;
@@ -39,20 +39,18 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements PlayerState
 //        soundMap = new HashMap<>();
 //        sampleId = 0;
         psMachine = new PlayerStateMachine();
-        psMachine.setPlayerStateMachineListener(this);
+        psMachine.setPlayStatusListener(this);
     }
 
     private VoiceBean curVoiceBean = null;
 
-    private boolean isCancel = false;
-
     @Override
     public void run() {
-        while(!isCancel) {
+        while(true) {
             try {
                 PlayTask task = mQueue.take();
                 VoiceBean voiceBean = task.getVoiceBean();
-                curVoiceBean = voiceBean;
+
                 EMVoiceMessageBody body = voiceBean.getVoice();
                 EMFileMessageBody.EMDownloadStatus s = body.downloadStatus();
 
@@ -61,6 +59,8 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements PlayerState
                 }else if(s == EMFileMessageBody.EMDownloadStatus.DOWNLOADING){
                     Log.e(TAG,"voice-downloading");
                 }else if(s == EMFileMessageBody.EMDownloadStatus.SUCCESSED){
+                    checkIsPlaying();
+                    curVoiceBean = voiceBean;
                     Log.e(TAG,"voice-download-success");
                     callToMainThread(PlayStatus.PROGRESS.setVoiceBean(curVoiceBean));
                     loadVoice(body);
@@ -74,14 +74,12 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements PlayerState
                 e.printStackTrace();
             }
         }
-        if(psMachine != null){
-            psMachine.releaseRes();
-            psMachine = null;
-        }
     }
 
-    public void cancel(){
-        isCancel = true;
+    private void checkIsPlaying(){
+        if(psMachine.isPlaying()){
+            callToMainThread(PlayStatus.SUCCESS.setVoiceBean(curVoiceBean));
+        }
     }
 
     private void loadVoice(EMVoiceMessageBody body){
@@ -90,14 +88,14 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements PlayerState
         Log.e(TAG, "localUrl->"+localUrl+",remoteUrl->" + remoteUrl);
         if(localUrl != null && !localUrl.equals("")){
             File file = new File(localUrl);
-            psMachine.playMedia(file);
-            return;
 //            int soundId = soundPool.load(file.getAbsolutePath(), 1);
 //            if(soundId != 0){
 //                //load success
 //                soundMap.put(++sampleId, soundId);
 //                return;
 //            }
+            psMachine.playMedia(file);
+            return;
         }
 
         callToMainThread(PlayStatus.FAIL.setErrMsg("load voice fail").setVoiceBean(curVoiceBean));
@@ -131,7 +129,7 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements PlayerState
 
     @Override
     public void onPlayError() {
-        callToMainThread(PlayStatus.FAIL.setErrMsg("media play error").setVoiceBean(curVoiceBean));
+        callToMainThread(PlayStatus.FAIL.setVoiceBean(curVoiceBean).setErrMsg("media play error"));
         curVoiceBean = null;
     }
 

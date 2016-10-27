@@ -3,7 +3,6 @@ package com.qg.kinectdoctor.emsdk;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
-import android.util.Log;
 
 import com.qg.kinectdoctor.activity.App;
 
@@ -13,36 +12,34 @@ import java.io.IOException;
 /**
  * Created by ZH_L on 2016/10/27.
  */
-public class PlayerStateMachine implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener{
+public class PlayerStateMachine implements MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnPreparedListener{
     private static final String TAG = PlayerStateMachine.class.getSimpleName();
     private MediaPlayer mediaPlayer;
+    private PlayerStatusListener psListener;
+
+    public PlayerStateMachine(){
+        initStatus();
+    }
 
     private boolean isPrepared;
-
-    public PlayerStateMachine(){}
+    private boolean isPlaying;
 
     private void initStatus(){
         isPrepared = false;
+        isPlaying = false;
     }
 
-    private void init(File file){
+    private void init(File dataSource){
         initStatus();
         if(mediaPlayer == null){
-            //prepare auto called
-            Uri uri = Uri.fromFile(file);
+            Uri uri = Uri.fromFile(dataSource);
             mediaPlayer = MediaPlayer.create(App.getInstance(), uri);
-            mediaPlayer.setOnPreparedListener(this);
             mediaPlayer.setOnCompletionListener(this);
             mediaPlayer.setOnErrorListener(this);
+            mediaPlayer.setOnPreparedListener(this);
         }else{
             try {
-                //your should call prepare by hand
-                mediaPlayer.setDataSource(file.getAbsolutePath());
-
-                //prepare block until mediaplayer can play
-                //mediaPlayer.prepare();
-
-                //prepare asynchronizly
+                mediaPlayer.setDataSource(dataSource.getAbsolutePath());
                 mediaPlayer.prepareAsync();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -50,34 +47,30 @@ public class PlayerStateMachine implements MediaPlayer.OnPreparedListener, Media
         }
     }
 
-    public void playMedia(File dataSource){
-        if(isMediaPlayerPlaying()){
+    public void playMedia(File file){
+        if(isMediaPlaying()){
             mediaPlayer.stop();
             mediaPlayer.reset();
         }
-        init(dataSource);
-
-    }
-
-    private boolean isMediaPlayerPlaying(){
-        if(mediaPlayer == null)return false;
-        return mediaPlayer.isPlaying();
+        init(file);
     }
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-        Log.e(TAG, "onCompletion");
-        if(mediaPlayer != null){
-            mediaPlayer.reset();
+        if(psListener != null){
+            psListener.onPlayComplete();
         }
-        if(mListener != null){
-            mListener.onPlayComplete();
-        }
+        mediaPlayer.reset();
+        isPlaying = false;
+    }
+
+    private boolean isMediaPlaying(){
+        if(mediaPlayer == null) return false;
+        return mediaPlayer.isPlaying();
     }
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
-        Log.e(TAG, "onPrepared");
         isPrepared = true;
         mediaPlayer.start();
     }
@@ -86,33 +79,27 @@ public class PlayerStateMachine implements MediaPlayer.OnPreparedListener, Media
         return isPrepared;
     }
 
+    public boolean isPlaying(){
+        return isPlaying;
+    }
+
     @Override
     public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
-        Log.e(TAG, "onError");
-        if(mediaPlayer != null){
-            mediaPlayer.reset();
-        }
-        if(mListener != null){
-            mListener.onPlayError();
+        mediaPlayer.reset();
+        isPlaying = false;
+        if(psListener != null){
+            psListener.onPlayError();
             return true;
         }
         return false;
     }
 
-    private PlayerStateMachineListener mListener;
-    public void setPlayerStateMachineListener(PlayerStateMachineListener listener){
-        mListener = listener;
+    public void setPlayStatusListener(PlayerStatusListener listener){
+        psListener = listener;
     }
 
-    public interface PlayerStateMachineListener{
+    public interface PlayerStatusListener{
         void onPlayComplete();
         void onPlayError();
-    }
-
-    public void releaseRes(){
-        if(mediaPlayer != null){
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
     }
 }
