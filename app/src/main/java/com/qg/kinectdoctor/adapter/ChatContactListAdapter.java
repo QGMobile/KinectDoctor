@@ -56,10 +56,9 @@ public class ChatContactListAdapter extends ItemAdapter<ChatInfoBean, ChatContac
         public void bindElement(ChatInfoBean bean) {
             PUser pUser = bean.getPUser();
             nameTv.setText(pUser.getName());
-            Log.e(TAG, "bindElement->name:"+pUser.getName());
             String username = bean.getIMUsername();
             int unReadCount = IMManager.getInstance(context).getUnreadMsgCount(username);
-            Log.e(TAG, "bindElement->unRead:"+unReadCount);
+            Log.e(TAG, "unReadCount");
             if(unReadCount <= 0 ){
                 unReadTv.setVisibility(View.GONE);
                 unReadTv.setText("");

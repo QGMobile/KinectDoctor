@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_chat_patient"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@color/color_grey">
+    android:background="@color/color_grey"
+    android:visibility="gone">
 
     <Button
         android:id="@+id/patient_voice_btn"
@@ -14,7 +16,7 @@
         android:layout_centerVertical="true"/>
 
     <TextView
-        android:id="@+id/time_length_tv"
+        android:id="@+id/p_time_length_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/patient_voice_btn"

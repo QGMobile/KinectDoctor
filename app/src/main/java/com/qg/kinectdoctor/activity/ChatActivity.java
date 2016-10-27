@@ -23,6 +23,7 @@ import com.qg.kinectdoctor.emsdk.EMConstants;
 import com.qg.kinectdoctor.emsdk.IMFilter;
 import com.qg.kinectdoctor.emsdk.IMManager;
 import com.qg.kinectdoctor.emsdk.MediaExectutor;
+import com.qg.kinectdoctor.emsdk.MediaPlayWorker;
 import com.qg.kinectdoctor.emsdk.PlayTask;
 import com.qg.kinectdoctor.emsdk.RecordTask;
 import com.qg.kinectdoctor.model.ChatInfoBean;
@@ -39,7 +40,7 @@ import java.util.List;
 /**
  * Created by ZH_L on 2016/10/22.
  */
-public class ChatActivity extends BaseActivity implements EMMessageListener, ChatAdapter.OnItemVoiceClickListener, View.OnLongClickListener, View.OnTouchListener, RecorderStateMachine.RecorderStateMachineListener{
+public class ChatActivity extends BaseActivity implements EMMessageListener, ChatAdapter.OnItemVoiceClickListener, View.OnLongClickListener, View.OnTouchListener, RecorderStateMachine.RecorderStateMachineListener, MediaPlayWorker.PlayStatusChangedListener{
     private static final String TAG = ChatActivity.class.getSimpleName();
 
     public static void startForResult(Activity activity, int requestCode){
@@ -74,6 +75,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
 
         rsMachine = new RecorderStateMachine();
         rsMachine.setRecorderStateMachineListener(this);
+        MediaExectutor.getInstance().setPlayStatusChangedListener(this);
     }
 
     private void initUI(){
@@ -124,12 +126,13 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     private void initEM(){
         String username = curChatingBean.getIMUsername();
         List<EMMessage> history = IMManager.getInstance(this).getChatHistory(username);
-        if(history != null){
-            Log.e(TAG, "message-size->"+history.size());
-        }
+        Log.e(TAG, "history-size->"+history.size());
         List<VoiceBean> beans = IMFilter.devideByTimeTitle(history, username);
+        Log.e(TAG, "bean-size->"+beans.size());
         mList.addAll(beans);
         mAdapter.notifyDataSetChanged();
+
+        IMManager.getInstance(this).addMessageListener(this);
     }
 
 
@@ -139,12 +142,18 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
 
     @Override
     public void onMessageReceived(List<EMMessage> list) {
-        Log.e(TAG, "onMessageReceived");
         if(list == null) return;
+        String chating = curChatingBean.getIMUsername();
+        List<EMMessage> chatingMsgs = new ArrayList<>();
         for(EMMessage message: list){
-            EMVoiceMessageBody voice = (EMVoiceMessageBody) message.getBody();
-            
+            String imUsername = message.getFrom();
+            if(chating.equals(imUsername)){
+                chatingMsgs.add(message);
+            }
         }
+        List<VoiceBean> newBeans = IMFilter.devideByTimeTitle(chatingMsgs, chating);
+        mList.addAll(newBeans);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -183,7 +192,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
 
     @Override
     public boolean onLongClick(View view) {
-        Log.e(TAG, "onLongClick");
         isLongClick = true;
         switch(view.getId()){
             case R.id.chat_record_btn:
@@ -212,31 +220,26 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         int action = motionEvent.getAction();
         switch(action){
             case MotionEvent.ACTION_DOWN:
-                Log.e(TAG, "action down");
                 //give longclick to handle
                 return false;
             case MotionEvent.ACTION_UP:
-                Log.e(TAG, "action up");
                 //check whether is longclick
                 if(isLongClick){
                     //end to record
                     rsMachine.stopRecorder(false);
                     showMessage("停止录音");
-                    return true;
                 }
                 return false;
             case MotionEvent.ACTION_MOVE:
-                Log.e(TAG, "action move");
 //                isLongClick = false;
 
                 return true;
             case MotionEvent.ACTION_CANCEL:
-                Log.e(TAG, "action cancel");
                 isLongClick = false;
                 //end to record and delete the recording file
                 rsMachine.stopRecorder(true);
 
-                return true;
+                return false;
         }
         return false;
     }
@@ -256,6 +259,20 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
             String imUsername = curChatingBean.getIMUsername();
             RecordTask task = new RecordTask(filePath, (int)length, imUsername);
             MediaExectutor.getInstance().executeRecordTask(task);
+        }
+    }
+
+    @Override
+    public void onPlayStatusChanged(MediaPlayWorker.PlayStatus nowStatus) {
+        switch(nowStatus){
+            case SUCCESS:
+                break;
+            case PROGRESS:
+                break;
+            case FAIL:
+                showMessage(nowStatus.getErrMsg());
+
+                break;
         }
     }
 }

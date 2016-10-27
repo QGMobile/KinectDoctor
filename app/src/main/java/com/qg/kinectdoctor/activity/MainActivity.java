@@ -10,8 +10,6 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.exceptions.HyphenateException;
 import com.qg.kinectdoctor.R;
 import com.qg.kinectdoctor.emsdk.IMManager;
 import com.qg.kinectdoctor.emsdk.LoginCallback;
@@ -25,13 +23,12 @@ import com.qg.kinectdoctor.util.ToastUtil;
 
 
 public class MainActivity extends BaseActivity {
-    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        loginEM();
+//        loginEM();
     }
 
     public static void test(final Context context, final TextView tv){
@@ -51,29 +48,23 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    public void loginEM(){
-        String phone = "12345678901";
-        IMManager.getInstance(this).login(phone, new LoginCallback() {
-            @Override
-            public void onSuccess() {
-                Log.e(MainActivity.TAG, "loginSuccess");
-//                try {
-//                    EMClient.getInstance().contactManager().addContact("d12345678901","");
-//                    Log.e(TAG, "addContact");
-//                } catch (HyphenateException e) {
-//                    e.printStackTrace();
-//                }
-                ChatListFragment fragment = new ChatListFragment();
-                FragmentManager manager = getSupportFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
-                transaction.replace(android.R.id.content, fragment);
-                transaction.commit();
-            }
-
-            @Override
-            public void onError(String errorMsg) {
-
-            }
-        });
-    }
+//    public void loginEM(){
+//        String phone = "12345678901";
+//        IMManager.getInstance(this).login(phone, new LoginCallback() {
+//            @Override
+//            public void onSuccess() {
+//                Log.e("loginEM", "onSuccess");
+//                FragmentManager manager = getSupportFragmentManager();
+//                FragmentTransaction transaction = manager.beginTransaction();
+//                ChatListFragment chatListFragment = new ChatListFragment();
+//                transaction.replace(android.R.id.content, chatListFragment);
+//                transaction.commit();
+//            }
+//
+//            @Override
+//            public void onError(String errorMsg) {
+//
+//            }
+//        });
+//    }
 }

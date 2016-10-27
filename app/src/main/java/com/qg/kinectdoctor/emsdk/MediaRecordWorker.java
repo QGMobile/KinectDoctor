@@ -42,9 +42,9 @@ public class MediaRecordWorker extends BaseWorker<RecordTask> implements EMCallB
                 String filePath = task.getFilePath();
                 int length = task.getLength();
                 String toWho = task.getImUsername();
-                Log.e(TAG, "recordFilePath->"+filePath+", length->"+length+", toWho->"+toWho);
+                Log.e(TAG, "filePath->"+filePath+", length->"+length+", toWho->"+toWho);
                 IMManager.getInstance(App.getInstance()).sendVoiceMessage(filePath, length, toWho, this);
-                Log.e(TAG, "immanager send record message");
+                
 //                synchronized (mLock) {
 //                    curTask = task;
 //                    int audioSource = task.getAudioSource();

@@ -37,19 +37,18 @@ public class MediaExectutor {
         mrWorker.exectute(task);
     }
 
-//    public MediaExectutor setMediaPlayerListener(MediaPlayWorker.MediaPlayListener listener){
-//        if(mpWorker != null){
-//            mpWorker.setMediaPlayerListener(listener);
-//        }
-//        return this;
-//    }
+    public void setPlayStatusChangedListener(MediaPlayWorker.PlayStatusChangedListener listener){
+        if(mpWorker != null){
+            mpWorker.setPlayStatusChangedListener(listener);
+        }
+    }
 
-//    public MediaExectutor setMediaRecordListener(MediaRecordWorker.MediaRecordListener listener){
-//        if(mrWorker != null){
-//            mrWorker.setMediaRecordListener(listener);
-//        }
-//        return this;
-//    }
+    public MediaExectutor setMediaRecordListener(MediaRecordWorker.MediaRecordListener listener){
+        if(mrWorker != null){
+            mrWorker.setMediaRecordListener(listener);
+        }
+        return this;
+    }
 
 
 

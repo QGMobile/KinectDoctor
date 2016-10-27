@@ -35,7 +35,7 @@ import java.util.Map;
 /**
  * Created by ZH_L on 2016/10/21.
  */
-public class ChatListFragment extends BaseFragment implements ChatContactListAdapter.OnChatItemClickListener, EMMessageListener, EMContactListener {
+public class ChatListFragment extends BaseFragment implements ChatContactListAdapter.OnChatItemClickListener, EMMessageListener, EMContactListener{
 
     private static final String TAG = ChatListFragment.class.getSimpleName();
 
@@ -46,9 +46,9 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_chatlist, null);
-        if (v != null) {
-            mRecyclerView = (RecyclerView) v.findViewById(R.id.recyclerview);
+        View v = inflater.inflate(R.layout.fragment_chatlist,null);
+        if(v != null){
+            mRecyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
             initRecyclerView();
             initEM();
             getDataFromServer();
@@ -57,7 +57,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
         return v;
     }
 
-    private void initRecyclerView() {
+    private void initRecyclerView(){
         mList = new ArrayList<>();
         mAdapter = new ChatContactListAdapter(getActivity(), mList, R.layout.item_chatlist);
         mAdapter.setOnChatItemClickListener(this);
@@ -65,14 +65,12 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    private void getDataFromServer() {
-
-        new Thread() {
+    private void getDataFromServer(){
+        new Thread(){
             @Override
             public void run() {
                 try {
                     final List<String> usernames = IMManager.getInstance(getActivity()).getFriendsList();
-                    Log.e(TAG, "getFriends from EM->"+usernames.toString());
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -81,28 +79,29 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
                             LogicImpl.getInstance().getPUserByPhoneParam(param, new LogicHandler<GetPUserByPhoneResult>() {
                                 @Override
                                 public void onResult(GetPUserByPhoneResult result, boolean onUIThread) {
-                                    if (onUIThread) {
-                                        if (result.isOk()) {
+                                    if(onUIThread){
+                                        if(result.isOk()){
                                             //get a Map<String, PUser>
                                             Map<String, PUser> phoneToPUser = result.getPhoneToPUser();
-                                            if (phoneToPUser != null) {
+                                            if(phoneToPUser != null){
                                                 Log.d("GetPUserByPhoneResult", phoneToPUser.toString());
                                             }
-                                            for (String phone : phones) {
+                                            for(String phone: phones) {
                                                 PUser pUser = phoneToPUser.get(phone);
-                                                if (pUser != null) {
+                                                if(pUser != null){
                                                     ChatInfoBean bean = new ChatInfoBean(pUser);
                                                     mList.add(bean);
                                                 }
                                             }
-
-                                        } else {
+                                            mAdapter.notifyDataSetChanged();
+                                        }else{
                                             ToastUtil.showResultErrorToast(result);
                                         }
-                                        PUser pUser = new PUser(18, "测试", 1, "13549991585","","1995-05-16");
-                                        ChatInfoBean cb = new ChatInfoBean(pUser);
-                                        mList.add(cb);
-                                        mAdapter.notifyDataSetChanged();
+//
+//                                        PUser pUser = new PUser(18, "测试", 1, "13549991585", "", "1995-05-16");
+//                                        ChatInfoBean cb = new ChatInfoBean(pUser);
+//                                        mList.add(cb);
+//                                        mAdapter.notifyDataSetChanged();
                                     }
                                 }
                             });
@@ -116,10 +115,11 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
             }
         }.start();
 
+
     }
 
 
-    private void initEM() {
+    private void initEM(){
         //监听消息回调
         IMManager.getInstance(getActivity()).addMessageListener(this);
         //监听联系人回调
@@ -128,11 +128,10 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
 
 
     private ChatInfoBean curChatingBean = null;
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == EMConstants.REQCODE_START_CHAT) {
-            Log.d(TAG, "onActivityResult");
+        if(requestCode == EMConstants.REQCODE_START_CHAT){
+            Log.d(TAG,"onActivityResult");
             curChatingBean = null;
         }
     }
@@ -141,22 +140,23 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
     @Override
     public void onChatItemClick(View v, int position) {
         ChatInfoBean bean = mList.get(position);
-        curChatingBean = bean;
+        curChatingBean  = bean;
         mAdapter.clearUnReadCount(bean);
         Bundle extra = new Bundle();
         extra.putSerializable(EMConstants.KEY_CHATINFO_BEAN, bean);
-        ChatActivity.startForResult(getActivity(), extra, EMConstants.REQCODE_START_CHAT);
+        ChatActivity.startForResult(getActivity(),extra,EMConstants.REQCODE_START_CHAT);
     }
 
     @Override
     public void onMessageReceived(List<EMMessage> list) {
-        if (list == null) return;
+        Log.e(TAG, "onMessageReceived");
+        if(list == null)return;
 
         //显示所有联系人的消息收到状态
         mAdapter.notifyDataSetChanged();
 
         //把正在聊天的人的未读消息清零
-        if (curChatingBean != null) {
+        if(curChatingBean != null){
             mAdapter.clearUnReadCount(curChatingBean);
         }
     }
@@ -181,33 +181,33 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
 
     }
 
-    private String filterUsernameToPhone(String username) {
-        if (username == null) return "";
-        return username.replace(EMConstants.DOCTOR_USERNAME_PREFIX, "").replace(EMConstants.PATIENT_USERNAME_PREFIX, "");
+    private String filterUsernameToPhone(String username){
+        if(username == null)return "";
+        return username.replace(EMConstants.DOCTOR_USERNAME_PREFIX,"").replace(EMConstants.PATIENT_USERNAME_PREFIX, "");
     }
 
     @Override
     public void onContactAdded(String username) {
-        if (username == null || username.equals("")) return;
+        if(username == null || username.equals("")) return;
         //增加了某个联系人
         final List<String> phones = IMFilter.filterToPhones(username);
         GetPUserByPhoneParam param = new GetPUserByPhoneParam(phones);
         LogicImpl.getInstance().getPUserByPhoneParam(param, new LogicHandler<GetPUserByPhoneResult>() {
             @Override
             public void onResult(GetPUserByPhoneResult result, boolean onUIThread) {
-                if (onUIThread) {
-                    if (result.isOk()) {
+                if(onUIThread){
+                    if(result.isOk()){
                         //get a Map<String, PUser>
                         Map<String, PUser> map = result.getPhoneToPUser();
-                        if (map != null) {
-                            for (String phone : phones) {
+                        if(map != null){
+                            for(String phone: phones){
                                 PUser pUser = map.get(phone);
                                 ChatInfoBean bean = new ChatInfoBean(pUser);
                                 mList.add(bean);
                             }
                         }
                         mAdapter.notifyDataSetChanged();
-                    } else {
+                    }else{
                         ToastUtil.showResultErrorToast(result);
                     }
                 }
@@ -218,10 +218,10 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
     @Override
     public void onContactDeleted(String username) {
         //被删除时调用,理论上这个for循环只有一个匹配
-        for (ChatInfoBean bean : mList) {
-            if (username.equals(bean.getIMUsername())) {
+        for(ChatInfoBean bean: mList){
+            if(username.equals(bean.getIMUsername())){
                 mList.remove(bean);
-                showMessage("病人-" + bean.getPUser().getName() + "-删除了你");
+                showMessage("病人-"+ bean.getPUser().getName() + "-删除了你");
             }
         }
         mAdapter.notifyDataSetChanged();
@@ -242,7 +242,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
 
     }
 
-    private void showMessage(String text) {
+    private void showMessage(String text){
         ToastUtil.showToast(getActivity(), text);
     }
 }
