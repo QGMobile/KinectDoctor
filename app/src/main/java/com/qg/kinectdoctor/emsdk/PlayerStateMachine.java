@@ -72,6 +72,7 @@ public class PlayerStateMachine implements MediaPlayer.OnCompletionListener, Med
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
         isPrepared = true;
+        isPlaying = true;
         mediaPlayer.start();
     }
 

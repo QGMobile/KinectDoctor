@@ -132,7 +132,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         Log.e(TAG, "bean-size->"+beans.size());
         mList.addAll(beans);
         mAdapter.notifyDataSetChanged();
-        mRecyclerView.smoothScrollToPosition(mList.size()-1);
+//        mRecyclerView.smoothScrollToPosition(mList.size()-1);
         IMManager.getInstance(this).addMessageListener(this);
     }
 
