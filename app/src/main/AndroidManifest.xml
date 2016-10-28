@@ -47,6 +47,27 @@
         </activity>
         <activity android:name=".activity.ChatActivity"
             android:label="@string/app_name">
+
+        </activity>
+        <activity android:name=".activity.HomeActivity"
+            android:label="@string/app_name">
+
+        </activity>
+        <activity android:name=".activity.NewRecordsEnterActivity"
+            android:label="@string/app_name">
+
+        </activity>
+        <activity android:name=".activity.NewRecordsActivity"
+            android:label="@string/app_name">
+
+        </activity>
+        <activity android:name=".activity.RecordsDetailActivity"
+            android:label="@string/app_name">
+
+        </activity>
+        <activity android:name=".activity.RehabilitationProgrammesActivity"
+            android:label="@string/app_name">
+
         </activity>
 
         <!-- 设置环信应用的AppKey -->
