@@ -6,6 +6,7 @@ import com.qg.kinectdoctor.logic.LogicHandler;
 import com.qg.kinectdoctor.logic.LogicImpl;
 import com.qg.kinectdoctor.param.LoginParam;
 import com.qg.kinectdoctor.result.LoginResult;
+import com.qg.kinectdoctor.util.FormatChecker;
 
 import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
 
@@ -36,6 +37,10 @@ public class LoginPresenter implements LoginContract.Presenter {
 
     @Override
     public void login(String phone, String password, boolean rememberPassword) {
+        if (!FormatChecker.isMobile(phone) || !FormatChecker.isAcceptablePassword(password)) {
+            mLoginView.showInputError();
+            return;
+        }
         LogicImpl.getInstance().login(new LoginParam(phone, password), new LogicHandler<LoginResult>() {
             @Override
             public void onResult(LoginResult result, boolean onUIThread) {

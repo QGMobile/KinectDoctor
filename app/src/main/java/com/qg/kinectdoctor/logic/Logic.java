@@ -1,7 +1,6 @@
 package com.qg.kinectdoctor.logic;
 
 import com.qg.kinectdoctor.param.DelMRParam;
-import com.qg.kinectdoctor.param.DelRcStageParam;
 import com.qg.kinectdoctor.param.GetDUserByPhoneParam;
 import com.qg.kinectdoctor.param.GetMRParam;
 import com.qg.kinectdoctor.param.GetPUserByPhoneParam;

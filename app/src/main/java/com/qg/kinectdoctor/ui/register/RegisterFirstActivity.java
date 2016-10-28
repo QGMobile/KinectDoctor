@@ -2,13 +2,9 @@ package com.qg.kinectdoctor.ui.register;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-import com.qg.kinectdoctor.R;
-import com.qg.kinectdoctor.activity.BaseActivity;
 import com.qg.kinectdoctor.activity.SingleFragmentActivity;
-import com.qg.kinectdoctor.util.ActivityUtils;
 
 public class RegisterFirstActivity extends SingleFragmentActivity {
 

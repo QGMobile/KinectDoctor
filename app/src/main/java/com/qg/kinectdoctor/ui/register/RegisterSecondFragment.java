@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-import android.text.InputType;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -68,7 +66,7 @@ public class RegisterSecondFragment extends BaseFragment implements RegisterSeco
                 );
             }
         });
-//
+
 //        // Set up clinic department spinner.
 //        View cds = root.findViewById(R.id.clinic_department_spinner);
 //        cds.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +90,11 @@ public class RegisterSecondFragment extends BaseFragment implements RegisterSeco
     @Override
     public void showError(String error) {
         ToastUtil.showToast(getContext(), error);
+    }
+
+    @Override
+    public void showEmptyError() {
+        ToastUtil.showToast(getContext(), getString(R.string.forbid_empty_input));
     }
 
     @Override

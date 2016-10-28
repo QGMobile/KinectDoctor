@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.qg.kinectdoctor.R;
 import com.qg.kinectdoctor.fragment.BaseFragment;
+import com.qg.kinectdoctor.ui.register.RegisterFirstActivity;
 import com.qg.kinectdoctor.util.ToastUtil;
 
 import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
@@ -98,6 +99,11 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
     }
 
     @Override
+    public void showInputError() {
+        ToastUtil.showToast(getContext(), R.string.login_input_error);
+    }
+
+    @Override
     public void showError(String error) {
         ToastUtil.showToast(getContext(), error);
     }
@@ -128,7 +134,8 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
 
     @Override
     public void showRegister() {
-//        RegisterActivity.start(getContext());
+        getActivity().finish();
+        RegisterFirstActivity.start(getContext());
     }
 
     @Override

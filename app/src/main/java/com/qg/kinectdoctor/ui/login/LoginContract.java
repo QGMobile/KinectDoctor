@@ -9,6 +9,8 @@ import com.qg.kinectdoctor.ui.BaseView;
 public class LoginContract {
 
     interface View extends BaseView<Presenter> {
+        void showInputError();
+
         void showError(String error);
 
         void setPhone(String phone);
