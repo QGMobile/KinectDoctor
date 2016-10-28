@@ -195,6 +195,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     @Override
     public void onVoiceClick(VoiceBean bean, int position) {
 //        VoiceBean bean = mList.get(position);
+        bean.setIsPlaying(true);
         PlayTask task = new PlayTask(bean);
         MediaExectutor.getInstance().executePlayTask(task);
     }
@@ -282,6 +283,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         final VoiceBean voiceBean = nowStatus.getVoiceBean();
         switch(nowStatus){
             case SUCCESS:
+                Log.e(TAG, "play status success");
                 if(voiceBean != null){
                     voiceBean.setIsPlaying(false);
                     mAdapter.notifyDataSetChanged();
