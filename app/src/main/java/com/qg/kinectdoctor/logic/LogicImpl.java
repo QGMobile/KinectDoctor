@@ -91,12 +91,12 @@ public class LogicImpl implements Logic{
     }
 
     @Override
-    public void getDUserByPhoneParam(GetDUserByPhoneParam param, LogicHandler<GetDUserByPhoneResult> handler) {
+    public void getDUserByPhone(GetDUserByPhoneParam param, LogicHandler<GetDUserByPhoneResult> handler) {
         getResult(param, handler, GetDUserByPhoneResult.class);
     }
 
     @Override
-    public void getPUserByPhoneParam(GetPUserByPhoneParam param, LogicHandler<GetPUserByPhoneResult> handler) {
+    public void getPUserByPhone(GetPUserByPhoneParam param, LogicHandler<GetPUserByPhoneResult> handler) {
         getResult(param, handler, GetPUserByPhoneResult.class);
     }
 

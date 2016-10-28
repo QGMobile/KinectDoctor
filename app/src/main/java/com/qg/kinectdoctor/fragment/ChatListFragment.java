@@ -33,6 +33,7 @@ import com.qg.kinectdoctor.param.GetPUserByPhoneParam;
 import com.qg.kinectdoctor.result.GetPUserByPhoneResult;
 import com.qg.kinectdoctor.util.CommandUtil;
 import com.qg.kinectdoctor.util.ToastUtil;
+import com.qg.kinectdoctor.view.TopbarL;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
 
     private static final String TAG = ChatListFragment.class.getSimpleName();
 
+    private TopbarL mTopbar;
     private RecyclerView mRecyclerView;
     private List<ChatInfoBean> mList;
     private ChatContactListAdapter mAdapter;
@@ -55,7 +57,9 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_chatlist,null);
         if(v != null){
+            mTopbar = (TopbarL)v.findViewById(R.id.chat_list_topbar);
             mRecyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
+            initTopbar();
             initRecyclerView();
             initEM();
             initReceiver();
@@ -64,6 +68,11 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
 //            loginEM();
         }
         return v;
+    }
+
+    private void initTopbar(){
+        String title = getActivity().getResources().getString(R.string.chat_list);
+        mTopbar.setCenterText(true, title, null);
     }
 
     private void initRecyclerView(){
@@ -117,7 +126,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
                         public void run() {
                             final List<String> phones = IMFilter.filterToPhones(usernames);
                             GetPUserByPhoneParam param = new GetPUserByPhoneParam(phones);
-                            LogicImpl.getInstance().getPUserByPhoneParam(param, new LogicHandler<GetPUserByPhoneResult>() {
+                            LogicImpl.getInstance().getPUserByPhone(param, new LogicHandler<GetPUserByPhoneResult>() {
                                 @Override
                                 public void onResult(GetPUserByPhoneResult result, boolean onUIThread) {
                                     if(onUIThread){
@@ -251,7 +260,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
         //增加了某个联系人
         final List<String> phones = IMFilter.filterToPhones(username);
         GetPUserByPhoneParam param = new GetPUserByPhoneParam(phones);
-        LogicImpl.getInstance().getPUserByPhoneParam(param, new LogicHandler<GetPUserByPhoneResult>() {
+        LogicImpl.getInstance().getPUserByPhone(param, new LogicHandler<GetPUserByPhoneResult>() {
             @Override
             public void onResult(GetPUserByPhoneResult result, boolean onUIThread) {
                 if(onUIThread){

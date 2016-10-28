@@ -24,9 +24,9 @@ public interface Logic {
 
     public void login(LoginParam param, LogicHandler<LoginResult> handler);
 
-    public void getDUserByPhoneParam(GetDUserByPhoneParam param, LogicHandler<GetDUserByPhoneResult> handler);
+    public void getDUserByPhone(GetDUserByPhoneParam param, LogicHandler<GetDUserByPhoneResult> handler);
 
-    public void getPUserByPhoneParam(GetPUserByPhoneParam param, LogicHandler<GetPUserByPhoneResult> handler);
+    public void getPUserByPhone(GetPUserByPhoneParam param, LogicHandler<GetPUserByPhoneResult> handler);
 
     public void GetMR(GetMRParam param, LogicHandler<GetMRResult> handler) ;
 
