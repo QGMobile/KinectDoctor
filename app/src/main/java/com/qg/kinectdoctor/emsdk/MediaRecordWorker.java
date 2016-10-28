@@ -48,6 +48,17 @@ public class MediaRecordWorker extends BaseWorker<RecordTask> {
                 int length = task.getLength();
                 String toWho = task.getImUsername();
                 Log.e(TAG, "filePath->"+filePath+", length->"+length+", toWho->"+toWho);
+                if(length < 1* 1000){
+                    if(mrListener != null){
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mrListener.onError(1001, "你的语音时间较短");
+                            }
+                        });
+                    }
+                    continue;
+                }
                 IMManager.getInstance(App.getInstance()).sendVoiceMessage(filePath, length, toWho, handler,mrListener);
                 
 //                synchronized (mLock) {
