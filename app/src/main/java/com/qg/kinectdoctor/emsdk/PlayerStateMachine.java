@@ -3,6 +3,7 @@ package com.qg.kinectdoctor.emsdk;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.util.Log;
 
 import com.qg.kinectdoctor.activity.App;
 
@@ -57,6 +58,7 @@ public class PlayerStateMachine implements MediaPlayer.OnCompletionListener, Med
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
+        Log.e(TAG, "onCompletion");
         if(psListener != null){
             psListener.onPlayComplete();
         }
