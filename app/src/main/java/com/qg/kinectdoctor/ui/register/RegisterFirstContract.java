@@ -19,7 +19,7 @@ public class RegisterFirstContract {
 
         void setPasswordVisibility(boolean visible);
 
-        void showPrevious();
+        void showLogin();
 
         void showNext(String phone, String password);
 
@@ -29,7 +29,7 @@ public class RegisterFirstContract {
     interface Presenter extends BasePresenter {
         void next(String phone, String password);
 
-        void previous();
+        void login();
 
         void result(int requestCode, int resultCode);
     }

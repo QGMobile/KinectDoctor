@@ -8,19 +8,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.qg.kinectdoctor.R;
 import com.qg.kinectdoctor.fragment.BaseFragment;
 import com.qg.kinectdoctor.ui.login.LoginActivity;
-import com.qg.kinectdoctor.util.ToastUtil;
 
 import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
-
-/**
- * Created by TZH on 2016/10/27.
- */
 
 public class RegisterFirstFragment extends BaseFragment implements RegisterFirstContract.View {
 
@@ -93,7 +87,7 @@ public class RegisterFirstFragment extends BaseFragment implements RegisterFirst
         pb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.previous();
+                mPresenter.login();
             }
         });
 
@@ -135,8 +129,9 @@ public class RegisterFirstFragment extends BaseFragment implements RegisterFirst
     }
 
     @Override
-    public void showPrevious() {
+    public void showLogin() {
         getActivity().finish();
+        LoginActivity.start(getContext());
     }
 
     @Override

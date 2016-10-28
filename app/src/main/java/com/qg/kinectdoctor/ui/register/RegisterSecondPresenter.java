@@ -1,5 +1,10 @@
 package com.qg.kinectdoctor.ui.register;
 
+import android.text.TextUtils;
+
+import com.qg.kinectdoctor.logic.LogicImpl;
+
+import static android.text.TextUtils.isEmpty;
 import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
 
 /**
@@ -27,8 +32,15 @@ public class RegisterSecondPresenter implements RegisterSecondContract.Presenter
 
     @Override
     public void register(String hospital, String clinicDepartment, String jobTitle) {
+        if (!checkParameters(hospital, clinicDepartment, jobTitle)) {
+            mRegisterSecondView.showEmptyError();
+            return;
+        }
         mRegisterSecondView.setUploadingIndicator(true);
-//        LogicImpl.getInstance().login();
+    }
+
+    private boolean checkParameters(String hospital, String clinicDepartment, String jobTitle) {
+        return !isEmpty(hospital) && isEmpty(clinicDepartment) && isEmpty(jobTitle);
     }
 
     @Override

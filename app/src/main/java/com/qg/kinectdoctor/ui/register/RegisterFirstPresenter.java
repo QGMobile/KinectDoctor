@@ -7,6 +7,7 @@ import com.qg.kinectdoctor.util.FormatChecker;
 import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
 
 /**
+ *
  * Created by TZH on 2016/10/27.
  */
 public class RegisterFirstPresenter implements RegisterFirstContract.Presenter {
@@ -42,14 +43,14 @@ public class RegisterFirstPresenter implements RegisterFirstContract.Presenter {
     }
 
     @Override
-    public void previous() {
-        mRegisterFirstView.showPrevious();
+    public void login() {
+        mRegisterFirstView.showLogin();
     }
 
     @Override
     public void result(int requestCode, int resultCode) {
         if (RegisterFirstActivity.REQUEST_FINISH_TOGETHER == requestCode && Activity.RESULT_OK == resultCode) {
-            mRegisterFirstView.showPrevious();
+            mRegisterFirstView.showLogin();
         }
     }
 }

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import com.qg.kinectdoctor.R;
 import com.qg.kinectdoctor.fragment.BaseFragment;
 import com.qg.kinectdoctor.ui.login.LoginActivity;
+import com.qg.kinectdoctor.ui.register.RegisterFirstActivity;
 
 import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
 
@@ -68,7 +69,7 @@ public class StarterFragment extends BaseFragment implements StarterContract.Vie
 
     @Override
     public void showRegister() {
-//        RegisterActivity.start(getContext());
+        RegisterFirstActivity.start(getContext());
     }
 
 }

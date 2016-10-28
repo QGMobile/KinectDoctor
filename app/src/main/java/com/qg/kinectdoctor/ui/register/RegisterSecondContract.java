@@ -13,6 +13,8 @@ public class RegisterSecondContract {
 
         void showError(String error);
 
+        void showEmptyError();
+
         void showSuccess();
 
         void showPrevious();
