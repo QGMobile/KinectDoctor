@@ -2,9 +2,7 @@ package com.qg.kinectdoctor.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,10 +11,9 @@ import android.view.View;
 import android.widget.Button;
 
 import com.hyphenate.EMMessageListener;
-import com.hyphenate.chat.EMConversation;
+import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMVoiceMessageBody;
-import com.hyphenate.exceptions.HyphenateException;
 import com.qg.kinectdoctor.R;
 import com.qg.kinectdoctor.adapter.ChatAdapter;
 import com.qg.kinectdoctor.emsdk.EMConstants;
@@ -24,24 +21,24 @@ import com.qg.kinectdoctor.emsdk.IMFilter;
 import com.qg.kinectdoctor.emsdk.IMManager;
 import com.qg.kinectdoctor.emsdk.MediaExectutor;
 import com.qg.kinectdoctor.emsdk.MediaPlayWorker;
+import com.qg.kinectdoctor.emsdk.MediaRecordWorker;
 import com.qg.kinectdoctor.emsdk.PlayTask;
 import com.qg.kinectdoctor.emsdk.RecordTask;
 import com.qg.kinectdoctor.model.ChatInfoBean;
 import com.qg.kinectdoctor.model.VoiceBean;
 import com.qg.kinectdoctor.util.CommandUtil;
-import com.qg.kinectdoctor.util.RecorderStateMachine;
+import com.qg.kinectdoctor.emsdk.RecorderStateMachine;
 import com.qg.kinectdoctor.util.ToastUtil;
 import com.qg.kinectdoctor.view.TopbarL;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by ZH_L on 2016/10/22.
  */
-public class ChatActivity extends BaseActivity implements EMMessageListener, ChatAdapter.OnItemVoiceClickListener, View.OnLongClickListener, View.OnTouchListener, RecorderStateMachine.RecorderStateMachineListener, MediaPlayWorker.PlayStatusChangedListener{
+public class ChatActivity extends BaseActivity implements EMMessageListener, ChatAdapter.OnItemVoiceClickListener, View.OnLongClickListener, View.OnTouchListener, RecorderStateMachine.RecorderStateMachineListener, MediaPlayWorker.PlayStatusChangedListener, MediaRecordWorker.MediaRecordListener{
     private static final String TAG = ChatActivity.class.getSimpleName();
 
     public static void startForResult(Activity activity, int requestCode){
@@ -64,6 +61,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     private ChatInfoBean curChatingBean;
 
     private RecorderStateMachine rsMachine;
+
+    private boolean isFirstCreated = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +77,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         rsMachine = new RecorderStateMachine();
         rsMachine.setRecorderStateMachineListener(this);
         MediaExectutor.getInstance().setPlayStatusChangedListener(this);
+        MediaExectutor.getInstance().setMediaRecordListener(this);
+
+        isFirstCreated = true;
     }
 
     private void initUI(){
@@ -121,25 +124,43 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        setResult(EMConstants.REQCODE_START_CHAT);
+//        setResult(EMConstants.REQCODE_START_CHAT);
+        Intent intent = new Intent(EMConstants.ACTION_CHAT_ACTIVITY_FINISH);
+        sendBroadcast(intent);
     }
 
     private void initEM(){
         String username = curChatingBean.getIMUsername();
         List<EMMessage> history = IMManager.getInstance(this).getChatHistory(username);
         Log.e(TAG, "history-size->"+history.size());
-        List<VoiceBean> beans = IMFilter.devideByTimeTitle(history, username);
+        EMMessage lastMsg = getLastMessage();
+        List<VoiceBean> beans = IMFilter.devideByTimeTitle(history, username, lastMsg);
         Log.e(TAG, "bean-size->"+beans.size());
         mList.addAll(beans);
         mAdapter.notifyDataSetChanged();
-
         IMManager.getInstance(this).addMessageListener(this);
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus && isFirstCreated){
+            mRecyclerView.smoothScrollToPosition(mList.size()-1);
+            isFirstCreated = !isFirstCreated;
+        }
+    }
 
     private String filterToPhone(String imUsername){
         return imUsername.replace(EMConstants.PATIENT_USERNAME_PREFIX,"").replace(EMConstants.DOCTOR_USERNAME_PREFIX, "");
     }
+
+    private Runnable r = new Runnable() {
+        @Override
+        public void run() {
+            mAdapter.notifyDataSetChanged();
+            mRecyclerView.smoothScrollToPosition(mList.size()-1);
+        }
+    };
 
     @Override
     public void onMessageReceived(List<EMMessage> list) {
@@ -155,9 +176,15 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         if(!chatingMsgs.isEmpty()){
             CommandUtil.vibrate(1000);
         }
-        List<VoiceBean> newBeans = IMFilter.devideByTimeTitle(chatingMsgs, chating);
+        EMMessage lastMsg = getLastMessage();
+        List<VoiceBean> newBeans = IMFilter.devideByTimeTitle(chatingMsgs, chating, lastMsg);
         mList.addAll(newBeans);
-        mAdapter.notifyDataSetChanged();
+        runOnUiThread(r);
+    }
+
+    private EMMessage getLastMessage(){
+        if(mList.size() <=0 )return null;
+        return mList.get(mList.size()-1).getMessage();
     }
 
     @Override
@@ -187,6 +214,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     @Override
     public void onVoiceClick(VoiceBean bean, int position) {
 //        VoiceBean bean = mList.get(position);
+        bean.setIsPlaying(true);
         PlayTask task = new PlayTask(bean);
         MediaExectutor.getInstance().executePlayTask(task);
     }
@@ -226,26 +254,32 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         int action = motionEvent.getAction();
         switch(action){
             case MotionEvent.ACTION_DOWN:
+                Log.e(TAG, "ACTION_DOWN");
                 //give longclick to handle
                 return false;
             case MotionEvent.ACTION_UP:
+                Log.e(TAG, "ACTION_UP");
                 //check whether is longclick
                 if(isLongClick){
                     //end to record
                     rsMachine.stopRecorder(false);
                     showMessage("停止录音");
+                    //如果这里return true 将看到按钮按了下去弹不起来
+                    //return true;
                 }
                 return false;
             case MotionEvent.ACTION_MOVE:
+                Log.e(TAG, "ACTION_MOVE");
 //                isLongClick = false;
 
                 return true;
             case MotionEvent.ACTION_CANCEL:
+                Log.e(TAG, "ACTION_CANCEL");
                 isLongClick = false;
                 //end to record and delete the recording file
                 rsMachine.stopRecorder(true);
 
-                return false;
+                return true;
         }
         return false;
     }
@@ -263,6 +297,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
             final String filePath = recordingFile.getAbsolutePath();
             final long length = recordDuration;
             final String imUsername = curChatingBean.getIMUsername();
+
             RecordTask task = new RecordTask(filePath, (int)length, imUsername);
             MediaExectutor.getInstance().executeRecordTask(task);
         }
@@ -273,6 +308,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         final VoiceBean voiceBean = nowStatus.getVoiceBean();
         switch(nowStatus){
             case SUCCESS:
+                Log.e(TAG, "play status success");
                 if(voiceBean != null){
                     voiceBean.setIsPlaying(false);
                     mAdapter.notifyDataSetChanged();
@@ -288,5 +324,28 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
                 showMessage(nowStatus.getErrMsg());
                 break;
         }
+    }
+
+    @Override
+    public void onSuccess(EMMessage message) {
+        Log.e(TAG," sendMessage->onSuccess");
+        List<EMMessage> list = new ArrayList<>();
+        list.add(message);
+        EMMessage lastMsg = getLastMessage();
+        List<VoiceBean> beans = IMFilter.devideByTimeTitle(list, message.getTo(), lastMsg);
+        mList.addAll(beans);
+        mAdapter.notifyDataSetChanged();
+        mRecyclerView.smoothScrollToPosition(mList.size()-1);
+    }
+
+    @Override
+    public void onError(int code, String errMsg) {
+        Log.e(TAG,"sendMessage->onError:"+errMsg);
+        showMessage(errMsg);
+    }
+
+    @Override
+    public void onProgressing(int progress, String status) {
+        Log.e(TAG, "sendMessage->onProgressing-"+progress+",status:"+status);
     }
 }

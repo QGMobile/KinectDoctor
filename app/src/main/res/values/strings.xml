@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">KinectDoctor</string>
+
+    <!-- Create by tzh. BEGIN.-->
     <string name="register">注册</string>
     <string name="login">登录</string>
     <string name="title_activity_login">LoginActivity</string>
@@ -16,4 +18,8 @@
     <string name="input_above_six_pwd">请输入6位以上的密码!</string>
     <string name="input_current_phone">请输入正确的手机号!</string>
     <string name="register_success">注册成功！</string>
+    <!-- Create by tzh. END.-->
+
+    <string name="getMRfail">获取病历失败，请稍后再试！</string>
+
 </resources>

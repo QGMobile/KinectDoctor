@@ -3,14 +3,24 @@ package com.qg.kinectdoctor.logic;
 import android.os.AsyncTask;
 
 import com.qg.kinectdoctor.http.HttpProcess;
+import com.qg.kinectdoctor.param.DelMRParam;
+import com.qg.kinectdoctor.param.DelRcStageParam;
 import com.qg.kinectdoctor.param.GetDUserByPhoneParam;
+import com.qg.kinectdoctor.param.GetMRParam;
 import com.qg.kinectdoctor.param.GetPUserByPhoneParam;
 import com.qg.kinectdoctor.param.LoginParam;
 import com.qg.kinectdoctor.param.Param;
+import com.qg.kinectdoctor.param.SetMRParam;
+import com.qg.kinectdoctor.param.SetRcStageParam;
+import com.qg.kinectdoctor.result.DelMRResult;
+import com.qg.kinectdoctor.result.DelRcStageResult;
 import com.qg.kinectdoctor.result.GetDUserByPhoneResult;
+import com.qg.kinectdoctor.result.GetMRResult;
 import com.qg.kinectdoctor.result.GetPUserByPhoneResult;
 import com.qg.kinectdoctor.result.LoginResult;
 import com.qg.kinectdoctor.result.Result;
+import com.qg.kinectdoctor.result.SetMRResult;
+import com.qg.kinectdoctor.result.SetRcStageResult;
 import com.qg.kinectdoctor.util.CommandUtil;
 
 import java.util.concurrent.Executor;
@@ -81,12 +91,37 @@ public class LogicImpl implements Logic{
     }
 
     @Override
-    public void getDUserByPhoneParam(GetDUserByPhoneParam param, LogicHandler<GetDUserByPhoneResult> handler) {
+    public void getDUserByPhone(GetDUserByPhoneParam param, LogicHandler<GetDUserByPhoneResult> handler) {
         getResult(param, handler, GetDUserByPhoneResult.class);
     }
 
     @Override
-    public void getPUserByPhoneParam(GetPUserByPhoneParam param, LogicHandler<GetPUserByPhoneResult> handler) {
+    public void getPUserByPhone(GetPUserByPhoneParam param, LogicHandler<GetPUserByPhoneResult> handler) {
         getResult(param, handler, GetPUserByPhoneResult.class);
+    }
+
+    @Override
+    public void GetMR(GetMRParam param, LogicHandler<GetMRResult> handler) {
+        getResult(param, handler, GetMRResult.class);
+    }
+
+    @Override
+    public void SetMR(SetMRParam param, LogicHandler<SetMRResult> handler) {
+        getResult(param, handler, SetMRResult.class);
+    }
+
+    @Override
+    public void DelMR(DelMRParam param, LogicHandler<DelMRResult> handler) {
+        getResult(param, handler, DelMRResult.class);
+    }
+
+    @Override
+    public void SetRcStage(SetRcStageParam param, LogicHandler<SetRcStageResult> handler) {
+        getResult(param, handler, SetRcStageResult.class);
+    }
+
+    @Override
+    public void DelRcStage(DelRcStageParam param, LogicHandler<DelRcStageResult> handler) {
+        getResult(param, handler, DelRcStageResult.class);
     }
 }

@@ -4,8 +4,7 @@
     android:id="@+id/item_chat_doctor"
     android:layout_width="match_parent"
     android:layout_height="80dp"
-    android:background="@color/color_grey"
-    android:visibility="gone">
+>
 
     <Button
         android:id="@+id/doctor_voice_btn"
@@ -14,7 +13,9 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="20dp"
-        android:background="@drawable/doctor_voice_normal" />
+        android:background="@drawable/doctor_voice_normal"
+        tools:text=""
+        android:maxEms="15"/>
 
     <TextView
         android:id="@+id/d_time_length_tv"

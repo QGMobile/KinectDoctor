@@ -20,22 +20,26 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Created by ZH_L on 2016/10/25.
  */
-public class MediaPlayWorker extends BaseWorker<PlayTask> implements  SoundPool.OnLoadCompleteListener{
+public class MediaPlayWorker extends BaseWorker<PlayTask> implements   PlayerStateMachine.PlayerStatusListener{
     private static final String TAG = MediaPlayWorker.class.getSimpleName();
 //    private Handler handler;
 //    private BlockingQueue<PlayTask> mpQueue;
 //    private MediaPlayer mediaPlayer;
-    private SoundPool soundPool;
-    private Map<Integer, Integer> soundMap;
-    private int sampleId;
+//    private SoundPool soundPool;
+//    private Map<Integer, Integer> soundMap;
+//    private int sampleId;
 
     private PlayStatusChangedListener mListener;
+
+    private PlayerStateMachine psMachine;
     public MediaPlayWorker(){
         super(Looper.getMainLooper());
-        soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
-        soundPool.setOnLoadCompleteListener(this);
-        soundMap = new HashMap<>();
-        sampleId = 0;
+//        soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
+//        soundPool.setOnLoadCompleteListener(this);
+//        soundMap = new HashMap<>();
+//        sampleId = 0;
+        psMachine = new PlayerStateMachine();
+        psMachine.setPlayStatusListener(this);
     }
 
     private VoiceBean curVoiceBean = null;
@@ -46,7 +50,7 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements  SoundPool.
             try {
                 PlayTask task = mQueue.take();
                 VoiceBean voiceBean = task.getVoiceBean();
-                curVoiceBean = voiceBean;
+
                 EMVoiceMessageBody body = voiceBean.getVoice();
                 EMFileMessageBody.EMDownloadStatus s = body.downloadStatus();
 
@@ -55,6 +59,8 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements  SoundPool.
                 }else if(s == EMFileMessageBody.EMDownloadStatus.DOWNLOADING){
                     Log.e(TAG,"voice-downloading");
                 }else if(s == EMFileMessageBody.EMDownloadStatus.SUCCESSED){
+                    checkIsPlaying();
+                    curVoiceBean = voiceBean;
                     Log.e(TAG,"voice-download-success");
                     callToMainThread(PlayStatus.PROGRESS.setVoiceBean(curVoiceBean));
                     loadVoice(body);
@@ -70,18 +76,26 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements  SoundPool.
         }
     }
 
+    private void checkIsPlaying(){
+        if(psMachine.isPlaying()){
+            callToMainThread(PlayStatus.SUCCESS.setVoiceBean(curVoiceBean));
+        }
+    }
+
     private void loadVoice(EMVoiceMessageBody body){
         String localUrl = body.getLocalUrl();
         String remoteUrl = body.getRemoteUrl();
         Log.e(TAG, "localUrl->"+localUrl+",remoteUrl->" + remoteUrl);
         if(localUrl != null && !localUrl.equals("")){
             File file = new File(localUrl);
-            int soundId = soundPool.load(file.getAbsolutePath(), 1);
-            if(soundId != 0){
-                //load success
-                soundMap.put(++sampleId, soundId);
-                return;
-            }
+//            int soundId = soundPool.load(file.getAbsolutePath(), 1);
+//            if(soundId != 0){
+//                //load success
+//                soundMap.put(++sampleId, soundId);
+//                return;
+//            }
+            psMachine.playMedia(file);
+            return;
         }
 
         callToMainThread(PlayStatus.FAIL.setErrMsg("load voice fail").setVoiceBean(curVoiceBean));
@@ -105,6 +119,18 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements  SoundPool.
 
     public void setPlayStatusChangedListener(PlayStatusChangedListener listener){
         mListener = listener;
+    }
+
+    @Override
+    public void onPlayComplete() {
+        callToMainThread(PlayStatus.SUCCESS.setVoiceBean(curVoiceBean));
+        curVoiceBean = null;
+    }
+
+    @Override
+    public void onPlayError() {
+        callToMainThread(PlayStatus.FAIL.setVoiceBean(curVoiceBean).setErrMsg("media play error"));
+        curVoiceBean = null;
     }
 
     public enum PlayStatus{
@@ -145,16 +171,15 @@ public class MediaPlayWorker extends BaseWorker<PlayTask> implements  SoundPool.
     }
 
     //sampleId is SoundMap's Key
-    @Override
-    public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-        if(status == 0 &&sampleId !=0){
-            Log.e(TAG,"onLoadComplete->sampleId:"+sampleId+",status:"+status);
-            int soundId = soundMap.get(sampleId);
-            soundPool.play(soundId, 1.0f, 1.0f, 0, 0, 1.0f);
-
-            callToMainThread(PlayStatus.SUCCESS.setVoiceBean(curVoiceBean));
-            curVoiceBean = null;
-        }
-
-    }
+//    @Override
+//    public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+//        if(status == 0 &&sampleId !=0){
+//            Log.e(TAG,"onLoadComplete->sampleId:"+sampleId+",status:"+status);
+//            int soundId = soundMap.get(sampleId);
+//            soundPool.play(soundId, 1.0f, 1.0f, 0, 0, 1.0f);
+//
+//            callToMainThread(PlayStatus.SUCCESS.setVoiceBean(curVoiceBean));
+//            curVoiceBean = null;
+//        }
+//    }
 }

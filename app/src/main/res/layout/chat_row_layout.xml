@@ -3,10 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="80dp">
     <include
-        layout="@layout/item_chat_time"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="center"/>
+        layout="@layout/item_chat_time"/>
     <include
         layout="@layout/item_chat_doctor"/>
     <include

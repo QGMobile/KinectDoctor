@@ -1,7 +1,11 @@
 package com.qg.kinectdoctor.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +24,7 @@ import com.qg.kinectdoctor.adapter.ChatContactListAdapter;
 import com.qg.kinectdoctor.emsdk.EMConstants;
 import com.qg.kinectdoctor.emsdk.IMFilter;
 import com.qg.kinectdoctor.emsdk.IMManager;
+import com.qg.kinectdoctor.emsdk.LoginCallback;
 import com.qg.kinectdoctor.logic.LogicHandler;
 import com.qg.kinectdoctor.logic.LogicImpl;
 import com.qg.kinectdoctor.model.ChatInfoBean;
@@ -28,10 +33,12 @@ import com.qg.kinectdoctor.param.GetPUserByPhoneParam;
 import com.qg.kinectdoctor.result.GetPUserByPhoneResult;
 import com.qg.kinectdoctor.util.CommandUtil;
 import com.qg.kinectdoctor.util.ToastUtil;
+import com.qg.kinectdoctor.view.TopbarL;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.RunnableFuture;
 
 /**
  * Created by ZH_L on 2016/10/21.
@@ -40,6 +47,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
 
     private static final String TAG = ChatListFragment.class.getSimpleName();
 
+    private TopbarL mTopbar;
     private RecyclerView mRecyclerView;
     private List<ChatInfoBean> mList;
     private ChatContactListAdapter mAdapter;
@@ -49,13 +57,22 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_chatlist,null);
         if(v != null){
+            mTopbar = (TopbarL)v.findViewById(R.id.chat_list_topbar);
             mRecyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
+            initTopbar();
             initRecyclerView();
             initEM();
+            initReceiver();
             getDataFromServer();
 
+//            loginEM();
         }
         return v;
+    }
+
+    private void initTopbar(){
+        String title = getActivity().getResources().getString(R.string.chat_list);
+        mTopbar.setCenterText(true, title, null);
     }
 
     private void initRecyclerView(){
@@ -64,6 +81,38 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
         mAdapter.setOnChatItemClickListener(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void loginEM(){
+        String phone = "13549991585";
+        IMManager.getInstance(getActivity()).login(phone, new LoginCallback() {
+            @Override
+            public void onSuccess() {
+                getDataFromServer();
+            }
+
+            @Override
+            public void onError(String errorMsg) {
+
+            }
+        });
+    }
+
+
+    private ChatInfoBean curChatingBean = null;
+    private BroadcastReceiver mReceiver;
+
+
+    private void initReceiver(){
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                curChatingBean = null;
+            }
+        };
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(EMConstants.ACTION_CHAT_ACTIVITY_FINISH);
+        getActivity().registerReceiver(mReceiver, filter);
     }
 
     private void getDataFromServer(){
@@ -77,7 +126,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
                         public void run() {
                             final List<String> phones = IMFilter.filterToPhones(usernames);
                             GetPUserByPhoneParam param = new GetPUserByPhoneParam(phones);
-                            LogicImpl.getInstance().getPUserByPhoneParam(param, new LogicHandler<GetPUserByPhoneResult>() {
+                            LogicImpl.getInstance().getPUserByPhone(param, new LogicHandler<GetPUserByPhoneResult>() {
                                 @Override
                                 public void onResult(GetPUserByPhoneResult result, boolean onUIThread) {
                                     if(onUIThread){
@@ -99,7 +148,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
                                             ToastUtil.showResultErrorToast(result);
                                         }
 //
-//                                        PUser pUser = new PUser(18, "测试", 1, "13549991585", "", "1995-05-16");
+//                                        PUser pUser = new PUser(18, "测试", 1, "12345678901", "", "1995-05-16");
 //                                        ChatInfoBean cb = new ChatInfoBean(pUser);
 //                                        mList.add(cb);
 //                                        mAdapter.notifyDataSetChanged();
@@ -127,15 +176,23 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
         IMManager.getInstance(getActivity()).setContactListener(this);
     }
 
-
-    private ChatInfoBean curChatingBean = null;
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == EMConstants.REQCODE_START_CHAT){
-            Log.d(TAG,"onActivityResult");
-            curChatingBean = null;
+    public void onDestroy() {
+        super.onDestroy();
+        if(mReceiver != null){
+            getActivity().unregisterReceiver(mReceiver);
+            mReceiver = null;
         }
     }
+
+
+    //    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if(requestCode == EMConstants.REQCODE_START_CHAT){
+//            Log.d(TAG,"onActivityResult");
+//            curChatingBean = null;
+//        }
+//    }
 
 
     @Override
@@ -148,18 +205,28 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
         ChatActivity.startForResult(getActivity(),extra,EMConstants.REQCODE_START_CHAT);
     }
 
+    private Runnable r = new Runnable(){
+
+        @Override
+        public void run() {
+            //显示所有联系人的消息收到状态
+            mAdapter.notifyDataSetChanged();
+
+            //把正在聊天的人的未读消息清零
+            if(curChatingBean != null){
+                Log.e(TAG, "clearUnReadCount");
+                mAdapter.clearUnReadCount(curChatingBean);
+            }
+        }
+    };
+
     @Override
     public void onMessageReceived(List<EMMessage> list) {
+        Log.e(TAG, "in main thread->"+(Looper.myLooper() == Looper.getMainLooper()));
         Log.e(TAG, "onMessageReceived");
         if(list == null)return;
         CommandUtil.vibrate(1000);
-        //显示所有联系人的消息收到状态
-        mAdapter.notifyDataSetChanged();
-
-        //把正在聊天的人的未读消息清零
-        if(curChatingBean != null){
-            mAdapter.clearUnReadCount(curChatingBean);
-        }
+        getActivity().runOnUiThread(r);
     }
 
     @Override
@@ -193,7 +260,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
         //增加了某个联系人
         final List<String> phones = IMFilter.filterToPhones(username);
         GetPUserByPhoneParam param = new GetPUserByPhoneParam(phones);
-        LogicImpl.getInstance().getPUserByPhoneParam(param, new LogicHandler<GetPUserByPhoneResult>() {
+        LogicImpl.getInstance().getPUserByPhone(param, new LogicHandler<GetPUserByPhoneResult>() {
             @Override
             public void onResult(GetPUserByPhoneResult result, boolean onUIThread) {
                 if(onUIThread){
