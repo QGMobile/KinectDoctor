@@ -70,13 +70,8 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".personal.login.LoginActivity"
-            android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity android:name=".personal.starter.StarterActivity">
-        </activity>
+        <activity android:name=".ui.login.LoginActivity"/>
+        <activity android:name=".ui.starter.StarterActivity"/>
     </application>
 
 </manifest>

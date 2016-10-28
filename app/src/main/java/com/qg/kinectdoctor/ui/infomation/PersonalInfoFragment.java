@@ -1,4 +1,4 @@
-package com.qg.kinectdoctor.personal.infomation;
+package com.qg.kinectdoctor.ui.infomation;
 
 import com.qg.kinectdoctor.fragment.BaseFragment;
 

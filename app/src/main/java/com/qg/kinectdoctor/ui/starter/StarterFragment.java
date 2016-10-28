@@ -1,4 +1,4 @@
-package com.qg.kinectdoctor.personal.starter;
+package com.qg.kinectdoctor.ui.starter;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.qg.kinectdoctor.R;
 import com.qg.kinectdoctor.fragment.BaseFragment;
+import com.qg.kinectdoctor.ui.login.LoginActivity;
 
 import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
 
@@ -62,12 +63,12 @@ public class StarterFragment extends BaseFragment implements StarterContract.Vie
 
     @Override
     public void showLogin() {
-
+        LoginActivity.start(getContext());
     }
 
     @Override
     public void showRegister() {
-
+//        RegisterActivity.start(getContext());
     }
 
 }

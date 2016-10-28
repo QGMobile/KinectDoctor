@@ -1,11 +1,10 @@
-package com.qg.kinectdoctor.personal.starter;
+package com.qg.kinectdoctor.ui.starter;
 
 import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
 
 /**
  * Created by TZH on 2016/10/27.
  */
-
 public class StarterPresenter implements StarterContract.Presenter {
 
     private final StarterContract.View mStarterView;

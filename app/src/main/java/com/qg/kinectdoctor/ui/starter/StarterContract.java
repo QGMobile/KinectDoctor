@@ -1,7 +1,7 @@
-package com.qg.kinectdoctor.personal.starter;
+package com.qg.kinectdoctor.ui.starter;
 
-import com.qg.kinectdoctor.mvp.BasePresenter;
-import com.qg.kinectdoctor.mvp.BaseView;
+import com.qg.kinectdoctor.ui.BasePresenter;
+import com.qg.kinectdoctor.ui.BaseView;
 
 /**
  * Created by TZH on 2016/10/27.
