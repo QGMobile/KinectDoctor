@@ -121,6 +121,8 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
             public void run() {
                 try {
                     final List<String> usernames = IMManager.getInstance(getActivity()).getFriendsList();
+//                     final List<String> users = new ArrayList<String>();
+//                    users.add("15521265445");
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
