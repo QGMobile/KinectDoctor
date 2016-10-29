@@ -19,9 +19,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
     <style name="style_dialog" parent="android:style/Theme.Dialog">
         <item name="android:windowBackground">@color/white</item>
@@ -45,6 +45,14 @@
         <item name="android:windowIsFloating">false</item>窗体是否浮动
         <item name="android:backgroundDimEnabled">true</item>背景是否昏暗
         <item name="android:backgroundDimAmount">0.6</item>昏暗数量
+    </style>
+
+    <style name="ToolbarRightText">
+        <item name="android:layout_gravity">end|center_vertical</item>
+        <item name="android:clickable">true</item>
+        <item name="android:textColor">@color/color_white</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:padding">16.5dp</item>
     </style>
 
 </resources>

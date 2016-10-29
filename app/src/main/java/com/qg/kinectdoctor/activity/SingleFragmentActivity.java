@@ -15,6 +15,11 @@ public abstract class SingleFragmentActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment);
+
+        prepareViews();
+
+        prepareExtraData();
+
         Fragment fragment = getSupportFragmentManager()
                 .findFragmentById(R.id.contentFrame);
 
@@ -25,13 +30,16 @@ public abstract class SingleFragmentActivity extends BaseActivity {
                     fragment, R.id.contentFrame);
         }
 
-        preCreatePresenter();
         createPresenter(fragment);
     }
 
-    protected void preCreatePresenter() {
+    protected void prepareViews() {
+    }
+
+    protected void prepareExtraData() {
     }
 
     protected abstract Fragment newFragment();
+
     protected abstract <T extends Fragment> void createPresenter(T fragment);
 }

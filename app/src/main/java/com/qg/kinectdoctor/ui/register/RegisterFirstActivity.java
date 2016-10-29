@@ -8,7 +8,7 @@ import com.qg.kinectdoctor.activity.SingleFragmentActivity;
 
 public class RegisterFirstActivity extends SingleFragmentActivity {
 
-    public static final int REQUEST_FINISH_TOGETHER = 1;
+    public static final int REQUEST_REGISTER = 1;
 
     public static void start(Context context) {
         Intent starter = new Intent(context, RegisterFirstActivity.class);

@@ -18,7 +18,6 @@ import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
 /**
  * Created by TZH on 2016/10/27.
  */
-
 public class RegisterSecondFragment extends BaseFragment implements RegisterSecondContract.View {
 
     private RegisterSecondContract.Presenter mPresenter;

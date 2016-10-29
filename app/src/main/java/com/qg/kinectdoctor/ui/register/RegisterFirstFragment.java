@@ -136,7 +136,7 @@ public class RegisterFirstFragment extends BaseFragment implements RegisterFirst
 
     @Override
     public void showNext(String phone, String password) {
-        RegisterSecondActivity.startForResult(getActivity(), RegisterFirstActivity.REQUEST_FINISH_TOGETHER, phone, password);
+        RegisterSecondActivity.startForResult(this, RegisterFirstActivity.REQUEST_REGISTER, phone, password);
     }
 
     @Override
