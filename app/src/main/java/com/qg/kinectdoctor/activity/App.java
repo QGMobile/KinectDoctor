@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.util.Log;
 
+import com.qg.kinectdoctor.model.DUser;
+
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +19,7 @@ public class App extends Application {
 
     private static App instance = null;
     private static final String TAG = App.class.getSimpleName();
+    private DUser user = null;
 
     @Override
     public void onCreate() {
@@ -63,5 +66,13 @@ public class App extends Application {
 
     public static App getInstance() {
         return instance;
+    }
+
+    public synchronized DUser getUser() {
+        return user;
+    }
+
+    public synchronized void setUser(DUser user) {
+        this.user = user;
     }
 }

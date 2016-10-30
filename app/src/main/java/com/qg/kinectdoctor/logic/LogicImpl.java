@@ -8,6 +8,7 @@ import com.qg.kinectdoctor.param.DelRcStageParam;
 import com.qg.kinectdoctor.param.GetDUserByPhoneParam;
 import com.qg.kinectdoctor.param.GetMRParam;
 import com.qg.kinectdoctor.param.GetPUserByPhoneParam;
+import com.qg.kinectdoctor.param.GetRcStageParam;
 import com.qg.kinectdoctor.param.LoginParam;
 import com.qg.kinectdoctor.param.Param;
 import com.qg.kinectdoctor.param.SetMRParam;
@@ -17,6 +18,7 @@ import com.qg.kinectdoctor.result.DelRcStageResult;
 import com.qg.kinectdoctor.result.GetDUserByPhoneResult;
 import com.qg.kinectdoctor.result.GetMRResult;
 import com.qg.kinectdoctor.result.GetPUserByPhoneResult;
+import com.qg.kinectdoctor.result.GetRcStageResult;
 import com.qg.kinectdoctor.result.LoginResult;
 import com.qg.kinectdoctor.result.Result;
 import com.qg.kinectdoctor.result.SetMRResult;
@@ -54,6 +56,23 @@ public class LogicImpl implements Logic{
             @Override
             public R onBackground() {
                 R result = HttpProcess.sendHttp(param, clazz);
+                handler.onResult(result, false);
+                return result;
+            }
+
+            @Override
+            public void onUI(R result) {
+                handler.onResult(result, true);
+            }
+        };
+        task.executeOnExecutor(exec);
+    }
+
+    private <P extends Param, R extends Result>void getResultP(final P param,final LogicHandler<R> handler,final Class<R> clazz){
+        GetResultTask<R> task = new GetResultTask<R>() {
+            @Override
+            public R onBackground() {
+                R result = HttpProcess.sendHttpP(param, clazz);
                 handler.onResult(result, false);
                 return result;
             }
@@ -123,5 +142,10 @@ public class LogicImpl implements Logic{
     @Override
     public void DelRcStage(DelRcStageParam param, LogicHandler<DelRcStageResult> handler) {
         getResult(param, handler, DelRcStageResult.class);
+    }
+
+    @Override
+    public void getRcStage(GetRcStageParam param, LogicHandler<GetRcStageResult> handler) {
+        getResultP(param, handler, GetRcStageResult.class);
     }
 }

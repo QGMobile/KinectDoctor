@@ -46,7 +46,7 @@ public class TopbarZ extends LinearLayout {
                 rText = (TextView) mView.findViewById(R.id.tv_right);
                 lText = (TextView) mView.findViewById(R.id.tv_left);
                 flCenter = (FrameLayout) mView.findViewById(R.id.fl_center);
-                mView.setPadding(0, getPaddingHeight(mView), 0, 0);
+                mView.setPadding(0, 0, 0, 0);
             }
 
         } catch (Exception e) {
