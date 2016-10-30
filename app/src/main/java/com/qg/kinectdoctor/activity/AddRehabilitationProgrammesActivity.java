@@ -99,7 +99,6 @@ public class AddRehabilitationProgrammesActivity extends BaseActivity implements
                                                     actions.get(position).getName(), medicalRecord.getPuserId());
                                             addRehabilitationStage(r);
                                             dialog.dismiss();
-                                            finish();
                                         }
                                     }).create();
                             dialog.show();
