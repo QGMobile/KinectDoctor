@@ -82,6 +82,14 @@ public class VoiceBean {
         this.isPlaying = isPlaying;
     }
 
+    public EMMessage getMessage(){
+        return message;
+    }
+
+    public void setMessage(EMMessage message){
+        this.message = message;
+    }
+
 //    public void setType(int type) {
 //        this.type = type;
 //    }

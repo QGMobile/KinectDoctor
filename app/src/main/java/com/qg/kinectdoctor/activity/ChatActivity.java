@@ -61,6 +61,9 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     private ChatInfoBean curChatingBean;
 
     private RecorderStateMachine rsMachine;
+
+    private boolean isFirstCreated = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +78,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         rsMachine.setRecorderStateMachineListener(this);
         MediaExectutor.getInstance().setPlayStatusChangedListener(this);
         MediaExectutor.getInstance().setMediaRecordListener(this);
+
+        isFirstCreated = true;
     }
 
     private void initUI(){
@@ -128,14 +133,22 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         String username = curChatingBean.getIMUsername();
         List<EMMessage> history = IMManager.getInstance(this).getChatHistory(username);
         Log.e(TAG, "history-size->"+history.size());
-        List<VoiceBean> beans = IMFilter.devideByTimeTitle(history, username);
+        EMMessage lastMsg = getLastMessage();
+        List<VoiceBean> beans = IMFilter.devideByTimeTitle(history, username, lastMsg);
         Log.e(TAG, "bean-size->"+beans.size());
         mList.addAll(beans);
         mAdapter.notifyDataSetChanged();
-//        mRecyclerView.smoothScrollToPosition(mList.size()-1);
         IMManager.getInstance(this).addMessageListener(this);
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus && isFirstCreated){
+            mRecyclerView.smoothScrollToPosition(mList.size()-1);
+            isFirstCreated = !isFirstCreated;
+        }
+    }
 
     private String filterToPhone(String imUsername){
         return imUsername.replace(EMConstants.PATIENT_USERNAME_PREFIX,"").replace(EMConstants.DOCTOR_USERNAME_PREFIX, "");
@@ -163,9 +176,15 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         if(!chatingMsgs.isEmpty()){
             CommandUtil.vibrate(1000);
         }
-        List<VoiceBean> newBeans = IMFilter.devideByTimeTitle(chatingMsgs, chating);
+        EMMessage lastMsg = getLastMessage();
+        List<VoiceBean> newBeans = IMFilter.devideByTimeTitle(chatingMsgs, chating, lastMsg);
         mList.addAll(newBeans);
         runOnUiThread(r);
+    }
+
+    private EMMessage getLastMessage(){
+        if(mList.size() <=0 )return null;
+        return mList.get(mList.size()-1).getMessage();
     }
 
     @Override
@@ -235,26 +254,32 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         int action = motionEvent.getAction();
         switch(action){
             case MotionEvent.ACTION_DOWN:
+                Log.e(TAG, "ACTION_DOWN");
                 //give longclick to handle
                 return false;
             case MotionEvent.ACTION_UP:
+                Log.e(TAG, "ACTION_UP");
                 //check whether is longclick
                 if(isLongClick){
                     //end to record
                     rsMachine.stopRecorder(false);
                     showMessage("停止录音");
+                    //如果这里return true 将看到按钮按了下去弹不起来
+                    //return true;
                 }
                 return false;
             case MotionEvent.ACTION_MOVE:
+                Log.e(TAG, "ACTION_MOVE");
 //                isLongClick = false;
 
                 return true;
             case MotionEvent.ACTION_CANCEL:
+                Log.e(TAG, "ACTION_CANCEL");
                 isLongClick = false;
                 //end to record and delete the recording file
                 rsMachine.stopRecorder(true);
 
-                return false;
+                return true;
         }
         return false;
     }
@@ -306,7 +331,8 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
         Log.e(TAG," sendMessage->onSuccess");
         List<EMMessage> list = new ArrayList<>();
         list.add(message);
-        List<VoiceBean> beans = IMFilter.devideByTimeTitle(list, message.getTo());
+        EMMessage lastMsg = getLastMessage();
+        List<VoiceBean> beans = IMFilter.devideByTimeTitle(list, message.getTo(), lastMsg);
         mList.addAll(beans);
         mAdapter.notifyDataSetChanged();
         mRecyclerView.smoothScrollToPosition(mList.size()-1);
