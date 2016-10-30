@@ -17,7 +17,7 @@ public class MedicalRecord implements Serializable {
     private String pname;//病患名
     private  int sex;
     private String pphone;//用户手机
-    private Date birth;
+    private String birth;
     private String dname;//医生名
     private String dphone;//医生手机
     private String hospital;//医院
@@ -29,7 +29,7 @@ public class MedicalRecord implements Serializable {
 
     public MedicalRecord(){};
 
-    public MedicalRecord(int puserId, int duserId, int age, String pname, int sex, String pphone, Date birth, String dname, String dphone, String hospital, String department, Date setTime, String conditions, String allergicDrug, ArrayList<RcStage> rcStages) {
+    public MedicalRecord(int puserId, int duserId, int age, String pname, int sex, String pphone, String birth, String dname, String dphone, String hospital, String department, Date setTime, String conditions, String allergicDrug, ArrayList<RcStage> rcStages) {
         this.puserId = puserId;
         this.duserId = duserId;
         this.age = age;
@@ -104,11 +104,11 @@ public class MedicalRecord implements Serializable {
         this.pphone = pphone;
     }
 
-    public Date getBirth() {
+    public String getBirth() {
         return birth;
     }
 
-    public void setBirth(Date birth) {
+    public void setBirth(String birth) {
         this.birth = birth;
     }
 
