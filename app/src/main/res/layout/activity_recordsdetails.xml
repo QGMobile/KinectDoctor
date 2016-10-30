@@ -25,37 +25,46 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_centerInParent="true">
 
                     <ImageView
                         android:id="@+id/image"
                         android:layout_width="33.5dp"
                         android:layout_height="45dp"
+                        android:layout_centerVertical="true"
                         android:src="@drawable/records_detail" />
 
-                    <TextView
-                        android:id="@+id/name"
+                    <RelativeLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginLeft="16dp"
                         android:layout_toRightOf="@id/image"
-                        android:text="章三順"
-                        android:textColor="@color/home_record"
-                        android:textSize="16dp" />
+                        android:layout_centerVertical="true"
+                        android:layout_height="wrap_content">
 
-                    <TextView
-                        android:id="@+id/age_sex"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/name"
-                        android:layout_marginLeft="21dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_toRightOf="@id/image"
-                        android:text="32，男"
-                        android:textColor="@color/home_record"
-                        android:textSize="12dp" />
+                        <TextView
+                            android:id="@+id/name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginTop="6dp"
+                            android:text="章三順"
+                            android:layout_centerHorizontal="true"
+                            android:textColor="@color/home_record"
+                            android:textSize="16dp" />
+
+                        <TextView
+                            android:id="@+id/age_sex"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/name"
+                            android:layout_marginLeft="21dp"
+                            android:layout_marginTop="8dp"
+                            android:text="32，男"
+                            android:layout_centerHorizontal="true"
+                            android:textColor="@color/home_record"
+                            android:textSize="12dp" />
+                    </RelativeLayout>
                 </RelativeLayout>
             </RelativeLayout>
 
@@ -181,7 +190,7 @@
                 android:background="@drawable/add_records"
                 android:text="@string/add_medical_records"
                 android:textColor="@color/white"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </LinearLayout>
 
     </ScrollView>
