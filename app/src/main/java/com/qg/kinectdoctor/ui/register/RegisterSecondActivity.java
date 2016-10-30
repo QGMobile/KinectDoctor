@@ -33,6 +33,6 @@ public class RegisterSecondActivity extends SingleFragmentActivity {
 
     @Override
     protected <T extends Fragment> void createPresenter(T fragment) {
-        new RegisterSecondPresenter((RegisterSecondContract.View) fragment, mPhone, mPassword);
+        new RegisterSecondPresenter((RegisterContract.View2) fragment, mPhone, mPassword);
     }
 }

@@ -1,5 +1,6 @@
 package com.qg.kinectdoctor.ui.login;
 
+import com.qg.kinectdoctor.model.DUser;
 import com.qg.kinectdoctor.ui.BasePresenter;
 import com.qg.kinectdoctor.ui.BaseView;
 
@@ -19,7 +20,7 @@ public class LoginContract {
 
         void setPasswordVisibility(boolean visible);
 
-        void showMain();
+        void showMain(DUser dUser);
 
         void showRegister();
 

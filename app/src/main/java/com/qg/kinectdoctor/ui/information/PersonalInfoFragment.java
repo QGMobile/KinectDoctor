@@ -1,6 +1,5 @@
 package com.qg.kinectdoctor.ui.information;
 
-import android.accounts.Account;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +12,7 @@ import com.qg.kinectdoctor.R;
 import com.qg.kinectdoctor.fragment.BaseFragment;
 import com.qg.kinectdoctor.ui.information.base.BaseInfoActivity;
 import com.qg.kinectdoctor.ui.information.job.JobInfoActivity;
+import com.qg.kinectdoctor.view.ToolbarT;
 
 import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
 

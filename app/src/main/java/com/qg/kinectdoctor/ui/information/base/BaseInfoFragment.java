@@ -9,7 +9,9 @@ import android.widget.TextView;
 
 import com.qg.kinectdoctor.R;
 import com.qg.kinectdoctor.fragment.BaseFragment;
+import com.qg.kinectdoctor.util.NumberUtil;
 import com.qg.kinectdoctor.util.ToastUtil;
+import com.qg.kinectdoctor.view.ToolbarT;
 
 import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
 
@@ -54,7 +56,35 @@ public class BaseInfoFragment extends BaseFragment implements BaseInfoContract.V
         mSexText = (TextView) root.findViewById(R.id.sex_text);
 
         mAge = root.findViewById(R.id.age);
+        mAge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         mSex = root.findViewById(R.id.sex);
+        mSex.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        // Set up toolbar.
+        ToolbarT toolbar = (ToolbarT) root.findViewById(R.id.toolbar);
+        toolbar.setDefaultUpButton(getActivity());
+        toolbar.setRightListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.saveBaseInfo(
+                        mNameText. getText().toString(),
+                        NumberUtil.parseInt(mAgeText.getText().toString(), 0),
+                        mSexText.getText().toString()
+                );
+            }
+        });
+
 
         return root;
     }

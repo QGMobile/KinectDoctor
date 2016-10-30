@@ -1,5 +1,6 @@
 package com.qg.kinectdoctor.ui.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.InputType;
@@ -11,7 +12,11 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.qg.kinectdoctor.R;
+import com.qg.kinectdoctor.activity.HomeActivity;
+import com.qg.kinectdoctor.activity.MainActivity;
 import com.qg.kinectdoctor.fragment.BaseFragment;
+import com.qg.kinectdoctor.model.DUser;
+import com.qg.kinectdoctor.ui.information.PersonalInfoActivity;
 import com.qg.kinectdoctor.ui.register.RegisterFirstActivity;
 import com.qg.kinectdoctor.util.ToastUtil;
 
@@ -65,6 +70,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
                         setPasswordVisibility(true);
                         return true;
                     case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_OUTSIDE:
                         // Hide password.
                         setPasswordVisibility(false);
                         return true;
@@ -72,6 +78,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
                 return false;
             }
         });
+        setPasswordVisibility(false);
 
         // Set up login button.
         View lb = root.findViewById(R.id.login);
@@ -128,8 +135,12 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
     }
 
     @Override
-    public void showMain() {
-//        MainActivity.start(this);
+    public void showMain(DUser dUser) {
+//        Intent intent = new Intent(getContext(), HomeActivity.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+//                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        startActivity(intent);
+        PersonalInfoActivity.start(getContext(), dUser.getId());
     }
 
     @Override

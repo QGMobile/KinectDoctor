@@ -6,9 +6,9 @@ import com.qg.kinectdoctor.ui.BaseView;
 /**
  * Created by TZH on 2016/10/27.
  */
-public class RegisterFirstContract {
+public class RegisterContract {
 
-    interface View extends BaseView<Presenter> {
+    interface View1 extends BaseView<Presenter1> {
         void showPhoneError();
 
         void hidePhoneError();
@@ -26,11 +26,29 @@ public class RegisterFirstContract {
         boolean isActive();
     }
 
-    interface Presenter extends BasePresenter {
+    interface Presenter1 extends BasePresenter {
         void next(String phone, String password);
 
         void login();
 
         void result(int requestCode, int resultCode);
     }
-}
+
+
+    interface View2 extends BaseView<Presenter2> {
+        void setUploadingIndicator(boolean active);
+
+        void showError(String error);
+
+        void showEmptyError();
+
+        void showSuccess();
+
+        void showLogin();
+
+        boolean isActive();
+    }
+
+    interface Presenter2 extends BasePresenter {
+        void register(String hospital, String clinicDepartment, String jobTitle);
+    }}

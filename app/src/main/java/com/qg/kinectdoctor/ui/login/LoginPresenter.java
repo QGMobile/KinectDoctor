@@ -1,9 +1,11 @@
 package com.qg.kinectdoctor.ui.login;
 
-import android.app.backup.SharedPreferencesBackupHelper;
-
+import com.qg.kinectdoctor.activity.App;
+import com.qg.kinectdoctor.emsdk.IMManager;
+import com.qg.kinectdoctor.emsdk.LoginCallback;
 import com.qg.kinectdoctor.logic.LogicHandler;
 import com.qg.kinectdoctor.logic.LogicImpl;
+import com.qg.kinectdoctor.model.DUser;
 import com.qg.kinectdoctor.param.LoginParam;
 import com.qg.kinectdoctor.result.LoginResult;
 import com.qg.kinectdoctor.util.FormatChecker;
@@ -30,13 +32,13 @@ public class LoginPresenter implements LoginContract.Presenter {
     private void loadAccount() {
         boolean isRemembered = true;
         if (isRemembered) {
-            mLoginView.setPhone("12345");
-            mLoginView.setPassword("12345");
+            mLoginView.setPhone("13549991585");
+            mLoginView.setPassword("qgmobile");
         }
     }
 
     @Override
-    public void login(String phone, String password, boolean rememberPassword) {
+    public void login(final String phone, String password, final boolean rememberPassword) {
         if (!FormatChecker.isMobile(phone) || !FormatChecker.isAcceptablePassword(password)) {
             mLoginView.showInputError();
             return;
@@ -44,16 +46,25 @@ public class LoginPresenter implements LoginContract.Presenter {
         LogicImpl.getInstance().login(new LoginParam(phone, password), new LogicHandler<LoginResult>() {
             @Override
             public void onResult(LoginResult result, boolean onUIThread) {
-                if (onUIThread) {
-                    if (!mLoginView.isActive()) {
-                        return;
-                    }
-                    if (result.isOk()) {
-                        mLoginView.showMain();
-                    } else {
-                        mLoginView.showError(result.errMsg);
-                    }
+                if (!result.isOk() || !onUIThread) {
+                    return;
                 }
+                final DUser dUser = result.getdUser();
+                IMManager.getInstance(App.getInstance()).login(phone, new LoginCallback() {
+                    @Override
+                    public void onSuccess() {
+                        if (mLoginView.isActive()) {
+                            mLoginView.showMain(dUser);
+                        }
+                    }
+
+                    @Override
+                    public void onError(String errorMsg) {
+                        if (mLoginView.isActive()) {
+                            mLoginView.showError(errorMsg);
+                        }
+                    }
+                });
             }
         });
     }
