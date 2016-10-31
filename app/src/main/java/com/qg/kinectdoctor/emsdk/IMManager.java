@@ -53,19 +53,32 @@ public class IMManager {
      * @param callback
      */
     public void login(final String phone, final LoginCallback callback){
+        final Handler handler = new Handler(Looper.getMainLooper());
         EMClient.getInstance().login(EMConstants.DOCTOR_USERNAME_PREFIX + phone, EMConstants.LOGIN_PASSWORD, new EMCallBack() {
             @Override
             public void onSuccess() {
                 EMClient.getInstance().groupManager().loadAllGroups();
                 EMClient.getInstance().chatManager().loadAllConversations();
                 Log.d(TAG,"emsdk login success-phone:" + phone);
-                callback.onSuccess();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onSuccess();
+                    }
+                });
+
             }
 
             @Override
-            public void onError(int code, String message) {
+            public void onError(final int code,final String message) {
                 Log.e(TAG,"emsdk login error-message:" + message);
-                callback.onError(message);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onError(message);
+                    }
+                });
+
             }
 
             @Override
