@@ -22,6 +22,6 @@ public class RegisterFirstActivity extends SingleFragmentActivity {
 
     @Override
     protected <T extends Fragment> void createPresenter(T fragment) {
-        new RegisterFirstPresenter((RegisterFirstContract.View) fragment);
+        new RegisterFirstPresenter((RegisterContract.View1) fragment);
     }
 }

@@ -4,21 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.qg.kinectdoctor.R;
 import com.qg.kinectdoctor.fragment.ChatListFragment;
-import com.qg.kinectdoctor.fragment.MeFragment;
-import com.qg.kinectdoctor.fragment.MessageFragment;
 import com.qg.kinectdoctor.fragment.PatientFragment;
-import com.qg.kinectdoctor.logic.LogicHandler;
-import com.qg.kinectdoctor.logic.LogicImpl;
-import com.qg.kinectdoctor.model.DUser;
-import com.qg.kinectdoctor.param.LoginParam;
-import com.qg.kinectdoctor.result.LoginResult;
+import com.qg.kinectdoctor.ui.information.PersonalInfoFragment;
 
 /**
  * Created by 攀登者 on 2016/10/28.
@@ -30,7 +22,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
     private static final int REQUEST_BUY_VIP = 0xff;
     private PatientFragment mPatientFragment;
     private ChatListFragment mMessageFragment;
-    private MeFragment mMeFragment;
+    private PersonalInfoFragment mPersonalInfoFragment;
     private final static int RECORDS_DETAIL = 0; // 病历详情
     private final static int NEW_RECORDS = 1; // 创建病历
 
@@ -42,33 +34,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        test();
-//        initViews();
-//        fragmentManager = getSupportFragmentManager();
-//        setTabSelection(1);
-//        setTabSelection(2);
-//        setTabSelection(0);
-    }
-
-    DUser dUser;
-    private void test() {
-        LoginParam param = new LoginParam("13549991585", "qgmobile");
-        LogicImpl.getInstance().login(param, new LogicHandler<LoginResult>() {
-            @Override
-            public void onResult(LoginResult result, boolean onUIThread) {
-                if (result.isOk() && onUIThread && result.status == 1) {
-                    App.getInstance().setUser(result.getdUser());
-                    Log.e(TAG, result.getdUser().toString());
-                    initViews();
-                    fragmentManager = getSupportFragmentManager();
-                    setTabSelection(1);
-                    setTabSelection(2);
-                    setTabSelection(0);
-                } else if (!result.isOk() && onUIThread) {
-                    Toast.makeText(HomeActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        initViews();
+        fragmentManager = getSupportFragmentManager();
+        setTabSelection(1);
+        setTabSelection(2);
+        setTabSelection(0);
     }
 
     private void initViews() {
@@ -135,11 +105,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case 2:
                 me.setImageResource(R.drawable.me_click);
-                if (mMeFragment == null) {
-                    mMeFragment = new MeFragment();
-                    transaction.add(R.id.fragmentlayout, mMeFragment);
+                if (mPersonalInfoFragment == null) {
+                    mPersonalInfoFragment = PersonalInfoFragment.newInstanceWithPresenter();
+                    transaction.add(R.id.fragmentlayout, mPersonalInfoFragment);
                 } else {
-                    transaction.show(mMeFragment);
+                    transaction.show(mPersonalInfoFragment);
                 }
                 break;
             default:
@@ -170,8 +140,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         if (mMessageFragment != null) {
             transaction.hide(mMessageFragment);
         }
-        if (mMeFragment != null) {
-            transaction.hide(mMeFragment);
+        if (mPersonalInfoFragment != null) {
+            transaction.hide(mPersonalInfoFragment);
         }
     }
 

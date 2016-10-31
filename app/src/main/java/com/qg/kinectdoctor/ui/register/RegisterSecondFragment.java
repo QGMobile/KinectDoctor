@@ -18,9 +18,9 @@ import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
 /**
  * Created by TZH on 2016/10/27.
  */
-public class RegisterSecondFragment extends BaseFragment implements RegisterSecondContract.View {
+public class RegisterSecondFragment extends BaseFragment implements RegisterContract.View2 {
 
-    private RegisterSecondContract.Presenter mPresenter;
+    private RegisterContract.Presenter2 mPresenter;
 
     private TextView mHospital;
 
@@ -41,7 +41,7 @@ public class RegisterSecondFragment extends BaseFragment implements RegisterSeco
     }
 
     @Override
-    public void setPresenter(RegisterSecondContract.Presenter presenter) {
+    public void setPresenter(RegisterContract.Presenter2 presenter) {
         mPresenter = checkNotNull(presenter);
     }
 
@@ -88,22 +88,17 @@ public class RegisterSecondFragment extends BaseFragment implements RegisterSeco
 
     @Override
     public void showError(String error) {
-        ToastUtil.showToast(getContext(), error);
+        ToastUtil.showToast2(getContext(), error);
     }
 
     @Override
     public void showEmptyError() {
-        ToastUtil.showToast(getContext(), getString(R.string.forbid_empty_input));
+        ToastUtil.showToast2(getContext(), getString(R.string.forbid_empty_input));
     }
 
     @Override
     public void showSuccess() {
-        ToastUtil.showToast(getContext(), getString(R.string.register_success));
-    }
-
-    @Override
-    public void showPrevious() {
-        getActivity().finish();
+        ToastUtil.showToast2(getContext(), getString(R.string.register_success));
     }
 
     @Override

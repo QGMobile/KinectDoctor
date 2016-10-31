@@ -16,9 +16,9 @@ import com.qg.kinectdoctor.ui.login.LoginActivity;
 
 import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
 
-public class RegisterFirstFragment extends BaseFragment implements RegisterFirstContract.View {
+public class RegisterFirstFragment extends BaseFragment implements RegisterContract.View1 {
 
-    private RegisterFirstContract.Presenter mPresenter;
+    private RegisterContract.Presenter1 mPresenter;
 
     private TextView mPhone;
 
@@ -39,7 +39,7 @@ public class RegisterFirstFragment extends BaseFragment implements RegisterFirst
     }
 
     @Override
-    public void setPresenter(RegisterFirstContract.Presenter presenter) {
+    public void setPresenter(RegisterContract.Presenter1 presenter) {
         mPresenter = checkNotNull(presenter);
     }
 

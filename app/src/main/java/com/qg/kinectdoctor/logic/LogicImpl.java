@@ -12,8 +12,10 @@ import com.qg.kinectdoctor.param.GetPUserByPhoneParam;
 import com.qg.kinectdoctor.param.GetRcStageParam;
 import com.qg.kinectdoctor.param.LoginParam;
 import com.qg.kinectdoctor.param.Param;
+import com.qg.kinectdoctor.param.RegisterParam;
 import com.qg.kinectdoctor.param.SetMRParam;
 import com.qg.kinectdoctor.param.SetRcStageParam;
+import com.qg.kinectdoctor.param.UpdateDUserParam;
 import com.qg.kinectdoctor.result.DelMRResult;
 import com.qg.kinectdoctor.result.DelRcStageResult;
 import com.qg.kinectdoctor.result.GetActionsResult;
@@ -22,9 +24,11 @@ import com.qg.kinectdoctor.result.GetMRResult;
 import com.qg.kinectdoctor.result.GetPUserByPhoneResult;
 import com.qg.kinectdoctor.result.GetRcStageResult;
 import com.qg.kinectdoctor.result.LoginResult;
+import com.qg.kinectdoctor.result.RegisterResult;
 import com.qg.kinectdoctor.result.Result;
 import com.qg.kinectdoctor.result.SetMRResult;
 import com.qg.kinectdoctor.result.SetRcStageResult;
+import com.qg.kinectdoctor.result.UpdateDUserResult;
 import com.qg.kinectdoctor.util.CommandUtil;
 
 import java.util.concurrent.Executor;
@@ -107,6 +111,16 @@ public class LogicImpl implements Logic{
     @Override
     public void login(LoginParam param, LogicHandler<LoginResult> handler) {
         getResult(param, handler, LoginResult.class);
+    }
+
+    @Override
+    public void register(RegisterParam param, LogicHandler<RegisterResult> handler) {
+        getResult(param, handler, RegisterResult.class);
+    }
+
+    @Override
+    public void updateDUser(UpdateDUserParam param, LogicHandler<UpdateDUserResult> handler) {
+        getResult(param, handler, UpdateDUserResult.class);
     }
 
     @Override

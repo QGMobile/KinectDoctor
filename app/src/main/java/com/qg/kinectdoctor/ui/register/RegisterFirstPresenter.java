@@ -9,11 +9,11 @@ import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
 /**
  * Created by TZH on 2016/10/27.
  */
-public class RegisterFirstPresenter implements RegisterFirstContract.Presenter {
+public class RegisterFirstPresenter implements RegisterContract.Presenter1 {
 
-    private final RegisterFirstContract.View mRegisterFirstView;
+    private final RegisterContract.View1 mRegisterFirstView;
 
-    public RegisterFirstPresenter(RegisterFirstContract.View registerFirstView) {
+    public RegisterFirstPresenter(RegisterContract.View1 registerFirstView) {
         mRegisterFirstView = checkNotNull(registerFirstView, "registerFirstView cannot be null!");
         mRegisterFirstView.setPresenter(this);
     }

@@ -18,7 +18,7 @@ public class FormatChecker {
      * 密码格式验证
      */
     public static boolean isAcceptablePassword(String str) {
-        return match(str, "^\\w{6}$");
+        return match(str, "^\\w{6,}$");
     }
 
 

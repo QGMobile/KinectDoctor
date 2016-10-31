@@ -1,7 +1,9 @@
 package com.qg.kinectdoctor.util;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.StringRes;
+import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
 import com.qg.kinectdoctor.activity.App;
@@ -28,6 +30,14 @@ public class ToastUtil {
     }
 
     public static void showResultErrorToast(Result r){
-        showToast(App.getInstance(), r.errMsg);
+        showToast(App.getInstance(), r.getErrMsg());
+    }
+
+    public static void showToast2(Context context, String s) {
+        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void showToast2(Context context, int s) {
+        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
     }
 }

@@ -1,6 +1,5 @@
 package com.qg.kinectdoctor.ui.information;
 
-import android.accounts.Account;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,9 +9,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.qg.kinectdoctor.R;
+import com.qg.kinectdoctor.activity.App;
 import com.qg.kinectdoctor.fragment.BaseFragment;
 import com.qg.kinectdoctor.ui.information.base.BaseInfoActivity;
 import com.qg.kinectdoctor.ui.information.job.JobInfoActivity;
+import com.qg.kinectdoctor.view.ToolbarT;
 
 import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
 
@@ -29,7 +30,8 @@ public class PersonalInfoFragment extends BaseFragment implements PersonalInfoCo
 
     private TextView mInfo;
 
-    public static PersonalInfoFragment newInstanceWithPresenter(int doctorId) {
+    public static PersonalInfoFragment newInstanceWithPresenter() {
+        int doctorId = App.getInstance().getUser().getId();
         PersonalInfoFragment fragment = newInstance(doctorId);
         new PersonalInfoPresenter(doctorId, fragment);
         return fragment;
