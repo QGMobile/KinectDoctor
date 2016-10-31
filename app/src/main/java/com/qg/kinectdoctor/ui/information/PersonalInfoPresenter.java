@@ -2,6 +2,9 @@ package com.qg.kinectdoctor.ui.information;
 
 import android.support.annotation.NonNull;
 
+import com.qg.kinectdoctor.activity.App;
+import com.qg.kinectdoctor.model.DUser;
+
 import static com.qg.kinectdoctor.util.Preconditions.checkNotNull;
 
 /**
@@ -24,7 +27,9 @@ class PersonalInfoPresenter implements PersonalInfoContract.Presenter {
     }
 
     private void loadInfo(int doctorId) {
-
+        DUser user = App.getInstance().getUser();
+        mView.showName(user.getName());
+        mView.showInfo(user.getAge() + "," + user.getDepartment());
     }
 
     @Override

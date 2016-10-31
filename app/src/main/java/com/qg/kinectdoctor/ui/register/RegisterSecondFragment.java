@@ -88,17 +88,17 @@ public class RegisterSecondFragment extends BaseFragment implements RegisterCont
 
     @Override
     public void showError(String error) {
-        ToastUtil.showToast(getContext(), error);
+        ToastUtil.showToast2(getContext(), error);
     }
 
     @Override
     public void showEmptyError() {
-        ToastUtil.showToast(getContext(), getString(R.string.forbid_empty_input));
+        ToastUtil.showToast2(getContext(), getString(R.string.forbid_empty_input));
     }
 
     @Override
     public void showSuccess() {
-        ToastUtil.showToast(getContext(), getString(R.string.register_success));
+        ToastUtil.showToast2(getContext(), getString(R.string.register_success));
     }
 
     @Override

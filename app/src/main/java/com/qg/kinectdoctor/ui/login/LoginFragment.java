@@ -107,12 +107,12 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
 
     @Override
     public void showInputError() {
-        ToastUtil.showToast(getContext(), R.string.login_input_error);
+        ToastUtil.showToast2(getContext(), R.string.login_input_error);
     }
 
     @Override
     public void showError(String error) {
-        ToastUtil.showToast(getContext(), error);
+        ToastUtil.showToast2(getContext(), error);
     }
 
     @Override
@@ -136,11 +136,10 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
 
     @Override
     public void showMain(DUser dUser) {
-//        Intent intent = new Intent(getContext(), HomeActivity.class);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-//                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//        startActivity(intent);
-        PersonalInfoActivity.start(getContext(), dUser.getId());
+        Intent intent = new Intent(getContext(), HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     @Override

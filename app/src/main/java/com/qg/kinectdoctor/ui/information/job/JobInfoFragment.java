@@ -79,7 +79,7 @@ public class JobInfoFragment extends BaseFragment implements JobInfoContract.Vie
 
     @Override
     public void showError(String error) {
-        ToastUtil.showToast(getContext(), error);
+        ToastUtil.showToast2(getContext(), error);
     }
 
     @Override
@@ -89,8 +89,14 @@ public class JobInfoFragment extends BaseFragment implements JobInfoContract.Vie
 
     @Override
     public void showSuccessEdit() {
-        ToastUtil.showToast(getContext(), R.string.edit_success);
+        ToastUtil.showToast2(getContext(), R.string.edit_success);
         getActivity().finish();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.start();
     }
 
     @Override

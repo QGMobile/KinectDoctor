@@ -313,6 +313,6 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
     }
 
     private void showMessage(String text){
-        ToastUtil.showToast(getActivity(), text);
+        ToastUtil.showToast2(getActivity(), text);
     }
 }
