@@ -28,6 +28,6 @@ public class ToastUtil {
     }
 
     public static void showResultErrorToast(Result r){
-        showToast(App.getInstance(), r.errMsg);
+        showToast(App.getInstance(), r.getErrMsg());
     }
 }

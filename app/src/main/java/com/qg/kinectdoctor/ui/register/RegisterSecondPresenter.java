@@ -53,7 +53,7 @@ public class RegisterSecondPresenter implements RegisterContract.Presenter2 {
                         mRegisterSecondView.showSuccess();
                         mRegisterSecondView.showLogin();
                     } else {
-                        mRegisterSecondView.showError(result.errMsg);
+                        mRegisterSecondView.showError(result.getErrMsg());
                     }
                 }
             }

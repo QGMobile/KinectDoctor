@@ -1,6 +1,7 @@
 package com.qg.kinectdoctor.ui.login;
 
 import com.qg.kinectdoctor.activity.App;
+import com.qg.kinectdoctor.data.UserRepository;
 import com.qg.kinectdoctor.emsdk.IMManager;
 import com.qg.kinectdoctor.emsdk.LoginCallback;
 import com.qg.kinectdoctor.logic.LogicHandler;
@@ -30,15 +31,12 @@ public class LoginPresenter implements LoginContract.Presenter {
     }
 
     private void loadAccount() {
-        boolean isRemembered = true;
-        if (isRemembered) {
-            mLoginView.setPhone("13549991585");
-            mLoginView.setPassword("qgmobile");
-        }
+        mLoginView.setPhone(UserRepository.getInstance().getPhone());
+        mLoginView.setPassword(UserRepository.getInstance().getPassword());
     }
 
     @Override
-    public void login(final String phone, String password, final boolean rememberPassword) {
+    public void login(final String phone, final String password, final boolean rememberPassword) {
         if (!FormatChecker.isMobile(phone) || !FormatChecker.isAcceptablePassword(password)) {
             mLoginView.showInputError();
             return;
@@ -46,15 +44,28 @@ public class LoginPresenter implements LoginContract.Presenter {
         LogicImpl.getInstance().login(new LoginParam(phone, password), new LogicHandler<LoginResult>() {
             @Override
             public void onResult(LoginResult result, boolean onUIThread) {
-                if (!result.isOk() || !onUIThread) {
+                if (!onUIThread) {
                     return;
                 }
+                if (!result.isOk()) {
+                    if (mLoginView.isActive()) {
+                        mLoginView.showError(result.getErrMsg());
+                    }
+                    return;
+                }
+                // OK
                 final DUser dUser = result.getdUser();
                 IMManager.getInstance(App.getInstance()).login(phone, new LoginCallback() {
                     @Override
                     public void onSuccess() {
                         if (mLoginView.isActive()) {
+                            App.getInstance().setUser(dUser);
                             mLoginView.showMain(dUser);
+                            if (rememberPassword) {
+                                saveLogin(phone, password);
+                            } else {
+                                clearLogin();
+                            }
                         }
                     }
 
@@ -66,7 +77,16 @@ public class LoginPresenter implements LoginContract.Presenter {
                     }
                 });
             }
+
         });
+    }
+
+    private void clearLogin() {
+        UserRepository.getInstance().clear();
+    }
+
+    private void saveLogin(String phone, String password) {
+        UserRepository.getInstance().saveUser(phone, password);
     }
 
     @Override
