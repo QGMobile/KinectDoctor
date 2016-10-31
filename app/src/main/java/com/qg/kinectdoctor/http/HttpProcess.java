@@ -41,15 +41,33 @@ public class HttpProcess {
         return result;
     }
 
-    private static <P extends Param> String sendParamToServer(P param) throws IOException {
+    public static <P extends Param, R extends Result> R sendHttpP(P param, Class<R> clazz){
+        R result = null;
+        try {
+            String response = sendParamToServerP(param);
+            Log.d(TAG,"response->"+response);
+            result = JsonUtil.toObj(response, clazz);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG,e.getMessage());
+            Result r = new Result();
+            r.status = 0;
+            r.errMsg = e.getMessage();
+            String j = JsonUtil.toJson(r);
+            result = JsonUtil.toObj(j, clazz);
+        }
+        return result;
+    }
+
+    private static <P extends Param> String sendParamToServer(P param, String urlSpec) throws IOException {
         String json = JsonUtil.toJson(param);
         Log.d(TAG,"json->"+json);
         BufferedReader br = null;
         OutputStream os = null;
         try {
             String entrance = paramToEntrance(param);
-            Log.d(TAG,"url->"+(DefList.url2 + entrance));
-            URL url = new URL(DefList.url2 + entrance);
+            Log.d(TAG,"url->"+(urlSpec + entrance));
+            URL url = new URL(urlSpec + entrance);
             try {
                 HttpURLConnection conn = (HttpURLConnection)url.openConnection();
                 initConnection(conn);
@@ -85,6 +103,13 @@ public class HttpProcess {
                 os.close();
             }
         }
+    }
+    private static <P extends Param> String sendParamToServer(P param) throws IOException {
+        return sendParamToServer(param, DefList.url2);
+    }
+
+    private static <P extends Param> String sendParamToServerP(P param) throws IOException {
+        return sendParamToServer(param, DefList.url3);
     }
 
     private static void initConnection(HttpURLConnection conn){

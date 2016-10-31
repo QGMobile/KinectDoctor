@@ -5,8 +5,8 @@ import com.qg.kinectdoctor.param.DelRcStageParam;
 import com.qg.kinectdoctor.param.GetDUserByPhoneParam;
 import com.qg.kinectdoctor.param.GetMRParam;
 import com.qg.kinectdoctor.param.GetPUserByPhoneParam;
+import com.qg.kinectdoctor.param.GetRcStageParam;
 import com.qg.kinectdoctor.param.LoginParam;
-import com.qg.kinectdoctor.param.RegisterParam;
 import com.qg.kinectdoctor.param.SetMRParam;
 import com.qg.kinectdoctor.param.SetRcStageParam;
 import com.qg.kinectdoctor.result.DelMRResult;
@@ -14,8 +14,8 @@ import com.qg.kinectdoctor.result.DelRcStageResult;
 import com.qg.kinectdoctor.result.GetDUserByPhoneResult;
 import com.qg.kinectdoctor.result.GetMRResult;
 import com.qg.kinectdoctor.result.GetPUserByPhoneResult;
+import com.qg.kinectdoctor.result.GetRcStageResult;
 import com.qg.kinectdoctor.result.LoginResult;
-import com.qg.kinectdoctor.result.RegisterResult;
 import com.qg.kinectdoctor.result.SetMRResult;
 import com.qg.kinectdoctor.result.SetRcStageResult;
 
@@ -40,5 +40,5 @@ public interface Logic {
 
     public void DelRcStage(DelRcStageParam param, LogicHandler<DelRcStageResult> handler);
 
-    public void register(RegisterParam param, LogicHandler<RegisterResult> handler);
+    public void getRcStage(GetRcStageParam param, LogicHandler<GetRcStageResult> handler);
 }

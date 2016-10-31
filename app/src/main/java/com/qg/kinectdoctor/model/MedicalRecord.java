@@ -2,12 +2,14 @@ package com.qg.kinectdoctor.model;
 
 import android.media.MediaRecorder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by ZH_L on 2016/10/22.
  */
-public class MedicalRecord {
+public class MedicalRecord implements Serializable {
     private int id;
     private int puserId;//所属病人
     private int duserId;//所属医生
@@ -15,19 +17,19 @@ public class MedicalRecord {
     private String pname;//病患名
     private  int sex;
     private String pphone;//用户手机
-    private String birth;
+    private Date birth;
     private String dname;//医生名
     private String dphone;//医生手机
     private String hospital;//医院
     private String department;//科室
-    private String setTime;//建立时间
-    private String condition;//病况
+    private Date setTime;//建立时间
+    private String conditions;//病况
     private String allergicDrug;//过敏药物
     private ArrayList<RcStage> rcStages;//康复阶段
 
     public MedicalRecord(){};
 
-    public MedicalRecord(int puserId, int duserId, int age, String pname, int sex, String pphone, String birth, String dname, String dphone, String hospital, String department, String setTime, String condition, String allergicDrug, ArrayList<RcStage> rcStages) {
+    public MedicalRecord(int puserId, int duserId, int age, String pname, int sex, String pphone, Date birth, String dname, String dphone, String hospital, String department, Date setTime, String conditions, String allergicDrug, ArrayList<RcStage> rcStages) {
         this.puserId = puserId;
         this.duserId = duserId;
         this.age = age;
@@ -40,7 +42,7 @@ public class MedicalRecord {
         this.hospital = hospital;
         this.department = department;
         this.setTime = setTime;
-        this.condition = condition;
+        this.conditions = conditions;
         this.allergicDrug = allergicDrug;
         this.rcStages = rcStages;
     }
@@ -102,11 +104,11 @@ public class MedicalRecord {
         this.pphone = pphone;
     }
 
-    public String getBirth() {
+    public Date getBirth() {
         return birth;
     }
 
-    public void setBirth(String birth) {
+    public void setBirth(Date birth) {
         this.birth = birth;
     }
 
@@ -142,20 +144,20 @@ public class MedicalRecord {
         this.department = department;
     }
 
-    public String getSetTime() {
+    public Date getSetTime() {
         return setTime;
     }
 
-    public void setSetTime(String setTime) {
+    public void setSetTime(Date setTime) {
         this.setTime = setTime;
     }
 
-    public String getCondition() {
-        return condition;
+    public String getConditions() {
+        return conditions;
     }
 
-    public void setCondition(String condition) {
-        this.condition = condition;
+    public void setConditions(String conditions) {
+        this.conditions = conditions;
     }
 
     public String getAllergicDrug() {
