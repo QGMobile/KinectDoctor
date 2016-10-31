@@ -1,8 +1,11 @@
 package com.qg.kinectdoctor.activity;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,10 +38,12 @@ public class RehabilitationProgrammesActivity extends BaseActivity implements Vi
     private TopbarZ topbar;
     private ListView mListView;
     private View view;
-    private Button add_rehabilitation_stage, delete_rehabilitation_stage;
+    private Button add_rehabilitation_stage;
     private ArrayList<RcStage> list;
     private static MedicalRecord medicalRecord;
     private RehabilitationProgrammesAdapter adapter;
+    private final static int ADDRP = 6;
+    private AlertDialog dialog;
 
     public static void start(Activity context, int requestCode, MedicalRecord data) {
         medicalRecord = data;
@@ -66,15 +71,30 @@ public class RehabilitationProgrammesActivity extends BaseActivity implements Vi
         mListView = (ListView) findViewById(R.id.listview);
         view = LayoutInflater.from(RehabilitationProgrammesActivity.this).inflate(R.layout.rehabilitation_programmes_footerview, null);
         add_rehabilitation_stage = (Button) view.findViewById(R.id.add_rehabilitation_stage);
-        delete_rehabilitation_stage = (Button) view.findViewById(R.id.delete_rehabilitation_stage);
         mListView.addFooterView(view);
         add_rehabilitation_stage.setOnClickListener(this);
-        delete_rehabilitation_stage.setOnClickListener(this);
 
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int position, long l) {
+                dialog = new AlertDialog.Builder(RehabilitationProgrammesActivity.this).
+                        setTitle(R.string.delete_rh).
+                        setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialog.dismiss();
+                            }
+                        }).
+                        setPositiveButton(R.string.sure, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                deleteRehabilitationStage(list.get(position).getId());
+                                dialog.dismiss();
+                            }
+                        }).create();
+                dialog.show();
 
+                return false;
             }
         });
     }
@@ -103,31 +123,9 @@ public class RehabilitationProgrammesActivity extends BaseActivity implements Vi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_rehabilitation_stage:
-
-                break;
-            case R.id.delete_rehabilitation_stage:
-
+                AddRehabilitationProgrammesActivity.start(RehabilitationProgrammesActivity.this, ADDRP, medicalRecord, list.size());
                 break;
         }
-    }
-
-    private void addRehabilitationStage(RcStage rcStage) {
-        SetRcStageParam param = new SetRcStageParam();
-        param.rcStage = rcStage;
-        LogicImpl.getInstance().SetRcStage(param, new LogicHandler<SetRcStageResult>() {
-            @Override
-            public void onResult(SetRcStageResult result, boolean onUIThread) {
-                if (result.isOk() && onUIThread) {
-                    if (result.status == 1) {
-                        Toast.makeText(RehabilitationProgrammesActivity.this, R.string.add_rc_suc, Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(RehabilitationProgrammesActivity.this, R.string.add_rc_fail, Toast.LENGTH_SHORT).show();
-                    }
-                } else if (!result.isOk() && onUIThread) {
-                    Toast.makeText(RehabilitationProgrammesActivity.this, R.string.add_rc_fail, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     private void deleteRehabilitationStage(int id) {
@@ -138,6 +136,7 @@ public class RehabilitationProgrammesActivity extends BaseActivity implements Vi
             public void onResult(DelRcStageResult result, boolean onUIThread) {
                 if (result.isOk() && onUIThread) {
                     if (result.status == 1) {
+                        getRcStage();
                         Toast.makeText(RehabilitationProgrammesActivity.this, R.string.del_mr_suc, Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(RehabilitationProgrammesActivity.this, R.string.del_mr_fail, Toast.LENGTH_SHORT).show();
@@ -147,5 +146,21 @@ public class RehabilitationProgrammesActivity extends BaseActivity implements Vi
                 }
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK)
+            return;
+
+        switch (requestCode) {
+            case ADDRP:
+                Log.e("ss", "Dsad");
+                getRcStage();
+                break;
+            default:
+                break;
+        }
     }
 }
