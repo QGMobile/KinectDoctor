@@ -38,6 +38,7 @@
 
         <activity
             android:name=".activity.HomeActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,26 +47,33 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.AddRehabilitationProgrammesActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity android:name=".activity.RehabilitationProgrammesActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity android:name=".activity.ChatActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name">
 
         </activity>
         <activity android:name=".activity.MainActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name">
 
         </activity>
         <activity android:name=".activity.NewRecordsEnterActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name">
 
         </activity>
         <activity android:name=".activity.NewRecordsActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name">
 
         </activity>
         <activity android:name=".activity.RecordsDetailActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name">
 
         </activity>
