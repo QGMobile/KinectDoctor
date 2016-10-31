@@ -102,12 +102,12 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
             }
         });
 
-        mTopbar.setRightImage(true, R.drawable.person_info_selector, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //jump to where
-            }
-        });
+//        mTopbar.setRightImage(true, R.drawable.person_info_selector, new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                //jump to where
+//            }
+//        });
 
         mTopbar.setCenterText(true, curChatingBean.getPUser().getName(), null);
     }

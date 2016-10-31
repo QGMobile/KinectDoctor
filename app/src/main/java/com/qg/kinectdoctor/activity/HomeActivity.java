@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.qg.kinectdoctor.R;
+import com.qg.kinectdoctor.fragment.ChatListFragment;
 import com.qg.kinectdoctor.fragment.MeFragment;
 import com.qg.kinectdoctor.fragment.MessageFragment;
 import com.qg.kinectdoctor.fragment.PatientFragment;
@@ -28,7 +29,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "HomeActivity";
     private static final int REQUEST_BUY_VIP = 0xff;
     private PatientFragment mPatientFragment;
-    private MessageFragment mMessageFragment;
+    private ChatListFragment mMessageFragment;
     private MeFragment mMeFragment;
     private final static int RECORDS_DETAIL = 0; // 病历详情
     private final static int NEW_RECORDS = 1; // 创建病历
@@ -41,33 +42,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        test();
-//        initViews();
-//        fragmentManager = getSupportFragmentManager();
-//        setTabSelection(1);
-//        setTabSelection(2);
-//        setTabSelection(0);
-    }
-
-    DUser dUser;
-    private void test() {
-        LoginParam param = new LoginParam("13549991585", "qgmobile");
-        LogicImpl.getInstance().login(param, new LogicHandler<LoginResult>() {
-            @Override
-            public void onResult(LoginResult result, boolean onUIThread) {
-                if (result.isOk() && onUIThread && result.status == 1) {
-                    App.getInstance().setUser(result.getdUser());
-                    Log.e(TAG, result.getdUser().toString());
-                    initViews();
-                    fragmentManager = getSupportFragmentManager();
-                    setTabSelection(1);
-                    setTabSelection(2);
-                    setTabSelection(0);
-                } else if (!result.isOk() && onUIThread) {
-                    Toast.makeText(HomeActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        initViews();
+        fragmentManager = getSupportFragmentManager();
+        setTabSelection(1);
+        setTabSelection(2);
+        setTabSelection(0);
     }
 
     private void initViews() {
@@ -126,7 +105,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
             case 1:
                 message.setImageResource(R.drawable.message_click_null);
                 if (mMessageFragment == null) {
-                    mMessageFragment = new MessageFragment();
+                    mMessageFragment = new ChatListFragment();
                     transaction.add(R.id.fragmentlayout, mMessageFragment);
                 } else {
                     transaction.show(mMessageFragment);
