@@ -4,13 +4,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.qg.kinectdoctor.R;
+import com.qg.kinectdoctor.emsdk.IMManager;
+import com.qg.kinectdoctor.emsdk.LoginCallback;
 import com.qg.kinectdoctor.fragment.ChatListFragment;
+import com.qg.kinectdoctor.fragment.MeFragment;
+import com.qg.kinectdoctor.fragment.MessageFragment;
 import com.qg.kinectdoctor.fragment.PatientFragment;
-import com.qg.kinectdoctor.ui.information.PersonalInfoFragment;
+import com.qg.kinectdoctor.logic.LogicHandler;
+import com.qg.kinectdoctor.logic.LogicImpl;
+import com.qg.kinectdoctor.model.DUser;
+import com.qg.kinectdoctor.param.LoginParam;
+import com.qg.kinectdoctor.param.UpdateDUserParam;
+import com.qg.kinectdoctor.result.LoginResult;
 
 /**
  * Created by 攀登者 on 2016/10/28.
@@ -22,7 +33,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
     private static final int REQUEST_BUY_VIP = 0xff;
     private PatientFragment mPatientFragment;
     private ChatListFragment mMessageFragment;
-    private PersonalInfoFragment mPersonalInfoFragment;
+    private MeFragment mMeFragment;
     private final static int RECORDS_DETAIL = 0; // 病历详情
     private final static int NEW_RECORDS = 1; // 创建病历
 
@@ -34,12 +45,52 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        initViews();
-        fragmentManager = getSupportFragmentManager();
-        setTabSelection(1);
-        setTabSelection(2);
-        setTabSelection(0);
+        test();
+//        initViews();
+//        fragmentManager = getSupportFragmentManager();
+//        setTabSelection(1);
+//        setTabSelection(2);
+//        setTabSelection(0);
     }
+
+    DUser dUser;
+    private void test() {
+        LoginParam param = new LoginParam("13549991585", "qgmobile");
+        LogicImpl.getInstance().login(param, new LogicHandler<LoginResult>() {
+            @Override
+            public void onResult(final LoginResult result, boolean onUIThread) {
+                if (result.isOk() && onUIThread && result.status == 1) {
+                    IMManager.getInstance(HomeActivity.this).login(result.getdUser().getPhone(), new LoginCallback() {
+                        @Override
+                        public void onSuccess() {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    App.getInstance().setUser(result.getdUser());
+                                    Log.e(TAG, result.getdUser().toString());
+                                    initViews();
+                                    fragmentManager = getSupportFragmentManager();
+                                    setTabSelection(1);
+                                    setTabSelection(2);
+                                    setTabSelection(0);
+                                }
+                            });
+                        }
+                        @Override
+                        public void onError(String errorMsg) {
+
+                        }
+                    });
+
+
+                } else if (!result.isOk() && onUIThread) {
+                    Toast.makeText(HomeActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+
 
     private void initViews() {
         pacient = (ImageButton) findViewById(R.id.pacient);
@@ -105,11 +156,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case 2:
                 me.setImageResource(R.drawable.me_click);
-                if (mPersonalInfoFragment == null) {
-                    mPersonalInfoFragment = PersonalInfoFragment.newInstanceWithPresenter();
-                    transaction.add(R.id.fragmentlayout, mPersonalInfoFragment);
+                if (mMeFragment == null) {
+                    mMeFragment = new MeFragment();
+                    transaction.add(R.id.fragmentlayout, mMeFragment);
                 } else {
-                    transaction.show(mPersonalInfoFragment);
+                    transaction.show(mMeFragment);
                 }
                 break;
             default:
@@ -140,8 +191,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         if (mMessageFragment != null) {
             transaction.hide(mMessageFragment);
         }
-        if (mPersonalInfoFragment != null) {
-            transaction.hide(mPersonalInfoFragment);
+        if (mMeFragment != null) {
+            transaction.hide(mMeFragment);
         }
     }
 
