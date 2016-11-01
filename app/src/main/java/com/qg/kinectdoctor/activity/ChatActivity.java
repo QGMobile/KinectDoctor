@@ -2,6 +2,7 @@ package com.qg.kinectdoctor.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -144,7 +145,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener, Cha
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if(hasFocus && isFirstCreated){
+        if(hasFocus && isFirstCreated && !mList.isEmpty()){
             mRecyclerView.smoothScrollToPosition(mList.size()-1);
             isFirstCreated = !isFirstCreated;
         }
