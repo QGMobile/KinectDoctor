@@ -5,7 +5,7 @@
     <com.qg.kinectdoctor.view.TopbarL
         android:id="@+id/chat_list_topbar"
         android:layout_width="match_parent"
-        android:layout_height="60dp">
+        android:layout_height="56dp">
     </com.qg.kinectdoctor.view.TopbarL>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"

@@ -116,6 +116,7 @@ public class ChatListFragment extends BaseFragment implements ChatContactListAda
     }
 
     private void getDataFromServer(){
+        Log.e(TAG,"getDataFromServer");
         new Thread(){
             @Override
             public void run() {

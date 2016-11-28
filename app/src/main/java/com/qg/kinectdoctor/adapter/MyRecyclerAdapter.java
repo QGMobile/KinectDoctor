@@ -45,7 +45,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
     @Override
     public void onBindViewHolder(MyViewHolder viewHolder, int position) {
         viewHolder.name.setText(medicalRecordList.get(position).getPname());
-        viewHolder.ageAndsex.setText(medicalRecordList.get(position).getAge() + "，" + (medicalRecordList.get(position).getSex() == 0 ? "男" : "女"));
+        viewHolder.ageAndsex.setText(medicalRecordList.get(position).getAge() + "，" + (medicalRecordList.get(position).getSex() == 1 ? "男" : "女"));
         // 将数据保存在itemView的Tag中，以便点击时进行获取
         viewHolder.itemView.setTag(medicalRecordList.get(position));
     }

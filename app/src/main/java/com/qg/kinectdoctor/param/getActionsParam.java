@@ -1,7 +1,8 @@
 package com.qg.kinectdoctor.param;
 
 /**
- * Created by 攀登者 on 2016/10/30.
+ * Created by ZH_L on 2016/10/31.
  */
-public class GetActionsParam extends Param {
+
+public class GetActionsParam extends  Param {
 }
