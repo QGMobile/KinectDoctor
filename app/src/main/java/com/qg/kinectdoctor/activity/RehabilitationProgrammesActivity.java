@@ -156,7 +156,6 @@ public class RehabilitationProgrammesActivity extends BaseActivity implements Vi
 
         switch (requestCode) {
             case ADDRP:
-                Log.e("ss", "Dsad");
                 getRcStage();
                 break;
             default:

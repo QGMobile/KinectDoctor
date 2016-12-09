@@ -34,6 +34,7 @@ public class RehabilitationProgrammesAdapter extends ArrayAdapter<RcStage> {
             viewHolder = new ViewHolder();
             viewHolder.stage_name = (TextView) view.findViewById(R.id.stage_name);
             viewHolder.num = (TextView) view.findViewById(R.id.stage_num);
+            viewHolder.score = (TextView) view.findViewById(R.id.score);
             view.setTag(viewHolder);
         } else {
             view = converView;
@@ -41,11 +42,13 @@ public class RehabilitationProgrammesAdapter extends ArrayAdapter<RcStage> {
         }
         viewHolder.num.setText("阶段" + rcStage.getNum());
         viewHolder.stage_name.setText(rcStage.getActionName());
+        viewHolder.score.setText(rcStage.getMatchValue() + "分");
         return view;
     }
 
     class ViewHolder {
         TextView num;
         TextView stage_name;
+        TextView score;
     }
 }
